@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Psyop · Archivio sessioni</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* Strumento di lettura: barra in alto, elenco sessioni, poi il resoconto di una sessione in sezioni verticali. */
+:root{
+  --bg:#F4F1F8;--surface:#FFFFFF;--surface2:#EEE9F5;--line:#E6E0EF;--ink:#1C1824;--muted:#6F6782;--faint:#9A93AB;
+  --brand:#E0218A;--brand-soft:#FCE3F1;--bad:#D7263D;--warn:#C98A00;--good:#14936A;--blue:#3D6FE0;
+  --c-pub:#E0218A;--c-int:#3D6FE0;--c-msg:#14936A;--c-world:#D7263D;--c-nav:#9A93AB;--c-att:#C98A00;
+  --f-display:"Bricolage Grotesque","Arial Black",system-ui,sans-serif;--f-body:"Atkinson Hyperlegible",system-ui,sans-serif;--f-mono:ui-monospace,Menlo,Consolas,monospace;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:14.5px;line-height:1.45}
+button,input,select{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+.num{font-variant-numeric:tabular-nums}
+.bar-top{position:sticky;top:0;z-index:5;background:var(--surface);border-bottom:1px solid var(--line);padding:12px max(16px,env(safe-area-inset-left,0px));display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+.bar-top h1{margin:0;font-family:var(--f-display);font-weight:800;font-size:22px;color:var(--brand);letter-spacing:-.02em}
+.bar-top h1 span{color:var(--ink);font-weight:600;font-size:15px;margin-left:6px}
+.wrap{max-width:1180px;margin:0 auto;padding:18px max(16px,env(safe-area-inset-left,0px)) 60px;display:grid;gap:16px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px}
+.card h2{margin:0 0 10px;font-family:var(--f-display);font-weight:800;font-size:18px;letter-spacing:-.01em}
+.card h3{margin:14px 0 6px;font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+.hint{color:var(--muted);font-size:13px;margin:0}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+input[type=text],input[type=password],input[type=search]{background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:9px 12px;min-width:0;flex:1 1 220px}
+.btn{border:0;border-radius:10px;padding:9px 14px;font-weight:700;background:var(--brand);color:#fff}
+.btn.ghost{background:var(--surface2);color:var(--ink)}
+.btn.danger{background:var(--bad);color:#fff}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+label.file{display:inline-block}
+label.file input{display:none}
+.msg{font-size:13px;margin-top:8px}
+.msg.err{color:var(--bad)}.msg.ok{color:var(--good)}
+.tablebox{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13.5px}
+th,td{text-align:left;padding:7px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:11.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:700;white-space:nowrap}
+tr.sel td{background:var(--brand-soft)}
+tbody tr.click{cursor:pointer}
+tbody tr.click:hover td{background:var(--bg)}
+.pill{display:inline-block;padding:1px 8px;border-radius:20px;font-size:12px;background:var(--surface2);white-space:nowrap}
+.pill.bad{background:#FDE2E5;color:var(--bad)}.pill.good{background:#DDF4EB;color:var(--good)}.pill.warn{background:#FFF1C9;color:#8A5E00}
+.kpis{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.kpi{background:var(--bg);border-radius:12px;padding:10px 12px}
+.kpi b{display:block;font-family:var(--f-display);font-weight:800;font-size:20px}
+.kpi small{color:var(--muted);font-size:12px}
+.chart{width:100%;height:auto;display:block}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12.5px;color:var(--muted);margin-top:6px}
+.legend i{display:inline-block;width:12px;height:3px;border-radius:2px;margin-right:6px;vertical-align:middle}
+.legend i.dot{width:9px;height:9px;border-radius:50%}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.chips button{border:1px solid var(--line);background:var(--surface);border-radius:20px;padding:4px 10px;font-size:12.5px}
+.chips button.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.tl{list-style:none;margin:0;padding:0;max-height:620px;overflow-y:auto;border-top:1px solid var(--line)}
+.tl li{display:grid;grid-template-columns:62px 118px 10px minmax(0,1fr);gap:10px;padding:6px 4px;border-bottom:1px solid var(--line);font-size:13.5px;align-items:baseline}
+.tl time{font-family:var(--f-mono);font-size:12px;color:var(--muted)}
+.tl .g{font-size:12px;color:var(--faint)}
+.tl .d{width:8px;height:8px;border-radius:50%;align-self:center}
+.tl .txt{min-width:0;overflow-wrap:anywhere}
+.tl .txt q{color:var(--muted)}
+.empty{color:var(--muted);font-size:13.5px}
+.bars{display:grid;gap:6px}
+.bars .b{display:grid;grid-template-columns:150px minmax(0,1fr) 70px;gap:10px;align-items:center;font-size:13px}
+.bars .t{height:8px;border-radius:4px;background:var(--surface2);overflow:hidden}
+.bars .t i{display:block;height:100%;background:var(--c-att)}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:16px}
+.up{color:var(--good);font-weight:700}.down{color:var(--bad);font-weight:700}
+@media (max-width:640px){.tl li{grid-template-columns:52px 10px minmax(0,1fr)}.tl .g{display:none}.bars .b{grid-template-columns:110px minmax(0,1fr) 56px}}
+</style>
+</head>
+<body>
+<header class="bar-top"><h1>psyop.<span>Archivio sessioni</span></h1></header>
+<main class="wrap">
+  <section class="card" id="connect">
+    <h2>Collegamento all'archivio</h2>
+    <p class="hint">Inserisci l'indirizzo del Worker e la chiave di amministrazione (ADMIN_KEY). La chiave resta solo in questa scheda del browser. In alternativa apri un file di log scaricato.</p>
+    <div class="row" style="margin-top:10px">
+      <input type="text" id="wurl" placeholder="https://psyop.tuonome.workers.dev" aria-label="Indirizzo del Worker">
+      <input type="password" id="wkey" placeholder="Chiave di amministrazione" aria-label="Chiave di amministrazione">
+      <button class="btn" id="load">Carica sessioni</button>
+      <label class="file btn ghost">Apri file JSON<input type="file" id="fileIn" accept=".json,application/json"></label>
+    </div>
+    <div class="msg" id="cmsg" aria-live="polite"></div>
+  </section>
+
+  <section class="card" id="list" hidden>
+    <div class="row" style="justify-content:space-between;margin-bottom:8px"><h2 style="margin:0">Sessioni</h2><input type="search" id="find" placeholder="Cerca per codice o nome" aria-label="Cerca sessioni" style="max-width:280px"></div>
+    <div class="tablebox"><table><thead><tr><th>Inizio</th><th>Codice</th><th>Giocatore</th><th>Durata</th><th>Finale</th><th>Eventi</th><th>Dispositivo</th></tr></thead><tbody id="rows"></tbody></table></div>
+  </section>
+
+  <div id="report"></div>
+</main>
+<script src="js/util.js"></script>
+<script src="js/content.js"></script>
+<script src="js/config.js"></script>
+<script src="js/archive.js"></script>
+</body>
+</html>

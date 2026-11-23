@@ -1,0 +1,1 @@
+Metti qui le tue foto e video, poi elencali in data/media.json (vedi LEGGIMI.md).

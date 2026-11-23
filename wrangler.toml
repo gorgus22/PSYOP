@@ -1,0 +1,13 @@
+# Facoltativo: serve solo se pubblichi il Worker da riga di comando con "npx wrangler deploy".
+# Se usi il pannello web di Cloudflare puoi ignorare questo file (vedi LEGGIMI.md).
+name = "psyop"
+main = "worker.js"
+compatibility_date = "2026-11-01"
+
+[[kv_namespaces]]
+binding = "LOGS"
+id = "INSERISCI_QUI_ID_DEL_KV"
+
+[vars]
+ALLOWED_ORIGIN = "*"
+# ADMIN_KEY va impostata come segreto: npx wrangler secret put ADMIN_KEY
