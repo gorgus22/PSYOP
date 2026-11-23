@@ -57,20 +57,13 @@ input,textarea,select{font:inherit;color:var(--ink);background:var(--surface2);b
 }
 
 /* Header */
-.top{padding:42px 14px 10px;background:var(--surface);border-bottom:1px solid var(--line);flex:none;z-index:5}
+.top{padding:40px 14px 8px;background:var(--surface);border-bottom:1px solid var(--line);flex:none;z-index:5}
 @media (max-width:520px){.top{padding-top:10px}}
 .brandrow{display:grid;grid-template-columns:36px 1fr auto;align-items:center;gap:10px}
 .logo{font-family:var(--f-display);font-weight:800;font-size:26px;letter-spacing:-.03em;background:none;border:0;padding:0;justify-self:center;line-height:1;color:var(--brand)}
 .logo i{font-style:normal;color:var(--ink)}
 .hright{display:flex;gap:6px;align-items:center}
 .hbtn{border:1px solid var(--line);background:var(--surface);border-radius:8px;font-size:11px;padding:4px 8px;color:var(--muted);font-weight:700}
-.strip{display:flex;justify-content:space-between;gap:8px;margin-top:8px;font-size:11.5px;color:var(--muted);font-variant-numeric:tabular-nums}
-.strip b{color:var(--ink)}
-.strip .nero{color:var(--warn)}
-.meters{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:8px}
-.meter{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
-.meter .row{display:flex;justify-content:space-between;margin-bottom:4px}
-.meter .row b{color:var(--ink);letter-spacing:0;font-size:11px}
 .bar{height:5px;border-radius:5px;background:var(--chip);overflow:hidden}
 .bar i{display:block;height:100%;width:0;border-radius:5px;transition:width .4s;background:var(--brand)}
 .m-chaos i{background:var(--brand)} .m-sus i{background:var(--bad)} .m-cred i{background:var(--good)} .m-noise i{background:var(--warn)}
@@ -380,6 +373,10 @@ canvas.spark{width:100%;height:80px;display:block;margin:8px 0}
 .thread .bubble{margin:0;max-width:85%}
 .thread .bubble.me{align-self:flex-end;margin:0}
 .thread .typing{color:var(--muted);font-size:12.5px;font-style:italic}
+.page[data-kind=chat]{display:flex;flex-direction:column}
+.page[data-kind=chat] .thread{flex:1}
+.chatbar-page{position:sticky!important;bottom:68px}
+@media (min-width:1024px){.chatbar-page{bottom:0}}
 .chatbar{position:absolute;left:0;right:0;bottom:68px;z-index:16;background:var(--surface);border-top:1px solid var(--line);padding:8px 10px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px}
 .chatbar input{padding:10px 12px;border-radius:20px;font-size:15px}
 .chatbar .btn{width:auto;border-radius:20px;padding:9px 14px}
@@ -422,6 +419,84 @@ canvas.spark{width:100%;height:80px;display:block;margin:8px 0}
 .cbox ul{margin:6px 0 0;padding-left:18px;display:grid;gap:4px}
 .full.consent .btn{font-size:15px;padding:13px}
 .sessioncode{font-family:var(--f-mono);font-size:13px;background:rgba(255,255,255,.08);border-radius:10px;padding:10px 12px}
+/* Intestazione spoglia: in alto data, follower, portafoglio; poi logo; poi quattro indicatori a icona */
+.strip{display:flex;justify-content:space-between;align-items:center;gap:6px;font-size:12.5px;color:var(--muted);font-variant-numeric:tabular-nums;margin-bottom:6px}
+.strip .st{display:inline-flex;align-items:center;gap:5px;background:none;border:0;padding:2px 0;color:inherit;font:inherit;white-space:nowrap}
+.strip .st svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.strip b{color:var(--ink)}
+.strip .nero{color:var(--warn);margin-left:4px}
+.strip button.st{cursor:pointer;border-radius:8px;padding:2px 6px;background:var(--bg)}
+.meters{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:8px}
+.meter{display:grid;grid-template-columns:16px minmax(0,1fr) 24px;align-items:center;gap:5px}
+.meter svg{width:16px;height:16px;fill:none;stroke:var(--muted);stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.meter b{font-size:11px;color:var(--ink);text-align:right}
+.meter.alert b,.meter.alert svg{color:var(--bad);stroke:var(--bad)}
+.m-viral i{background:#7A3FE0}
+.tab .tl{display:none}
+.tab.dsk{display:none}
+.rcol{display:none}
+.tools{display:flex;gap:8px;align-items:center;margin-top:12px;flex-wrap:wrap}
+.tools .seg{flex:1;min-width:200px}
+.tools .seg svg{width:16px;height:16px;vertical-align:middle}
+.ibtn{width:42px;height:38px;border-radius:10px;border:1px solid var(--line);background:var(--surface);display:grid;place-items:center;padding:0;overflow:hidden;flex:none}
+.ibtn svg{width:20px;height:20px;fill:none;stroke:var(--ink);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.ibtn.on{border-color:var(--brand);box-shadow:0 0 0 2px var(--brand-soft)}
+.ibtn img{width:100%;height:100%;object-fit:cover}
+.nchip small{display:block}
+.targets button{padding:7px 12px}
+.info .legend li{border-color:var(--line)} .info .lt{background:var(--ink);color:var(--surface)} .info h1{display:none} .info h2{font-family:var(--f-display);font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin:14px 0 6px} .info ol{padding-left:18px;display:grid;gap:6px}
+/* Tutorial */
+.tut{position:absolute;inset:0;z-index:80;pointer-events:none}
+.tut .hole{position:absolute;border-radius:14px;box-shadow:0 0 0 9999px rgba(28,24,36,.6);transition:all .25s}
+.tut .tip{position:absolute;left:16px;right:16px;pointer-events:auto;background:var(--surface);border-radius:16px;padding:14px 16px;box-shadow:0 16px 40px -10px rgba(0,0,0,.5)}
+.tut .tip h4{margin:0 0 4px;font-family:var(--f-display);font-size:17px}
+.tut .tip p{margin:0 0 10px;font-size:14px;line-height:1.4;color:var(--ink)}
+.tut .tip .row{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.tut .tip .dots{font-size:12px;color:var(--muted)}
+.tut .tip .btn{width:auto;padding:8px 14px}
+.tut .tip .skip{background:none;border:0;color:var(--muted);text-decoration:underline;font-size:13px}
+
+/* ===== PC: interfaccia da social desktop a tre colonne ===== */
+@media (min-width:1024px){
+  body{overflow:hidden}
+  .stage{padding:0;display:block;background:var(--bg)}
+  .side{display:none}
+  .phone{width:100%;height:100%;border:0;border-radius:0;box-shadow:none;background:var(--bg)}
+  .phone::before{display:none}
+  .screen{border-radius:0;display:grid;grid-template-columns:minmax(240px,1fr) minmax(0,620px) minmax(300px,1fr);grid-template-rows:auto minmax(0,1fr);background:var(--bg)}
+  .top{grid-column:1;grid-row:1;justify-self:end;width:270px;padding:22px 18px 6px;border:0;background:transparent}
+  .top .brandrow{grid-template-columns:auto 1fr auto;margin:6px 0 4px}
+  .top .logo{justify-self:start;font-size:30px}
+  .strip{flex-direction:column;align-items:flex-start;gap:6px;font-size:14px}
+  .meters{grid-template-columns:1fr;gap:9px;margin-top:12px}
+  .meter{grid-template-columns:18px minmax(0,1fr) 30px}
+  .tabs{grid-column:1;grid-row:2;position:static;justify-self:end;align-self:start;width:270px;height:auto;display:flex;flex-direction:column;align-items:stretch;gap:2px;padding:10px 12px;background:transparent;border:0;backdrop-filter:none}
+  .tab{display:flex;align-items:center;gap:14px;font-size:16.5px;padding:11px 14px;border-radius:30px;color:var(--ink);position:relative}
+  .tab .tl{display:inline}
+  .tab.dsk{display:flex}
+  .tab:hover{background:var(--surface2)}
+  .tab.on{color:var(--brand);font-weight:700}
+  .tab svg{width:24px;height:24px}
+  .tab .badge{position:static;margin-left:auto}
+  .tab.plus{order:20;width:auto;height:auto;transform:none;margin-top:12px;justify-content:center;padding:13px;font-weight:700;color:var(--on)}
+  .tab.plus .tl{display:inline}
+  .tab.plus svg{width:20px;height:20px}
+  .tab.plus.cool::after{border-radius:30px}
+  .views{grid-column:2;grid-row:1/3;border-left:1px solid var(--line);border-right:1px solid var(--line);background:var(--surface)}
+  .view,.page{padding-bottom:40px}
+  .chatbar{bottom:0}
+  .rcol{display:block;grid-column:3;grid-row:1/3;overflow-y:auto;padding:14px 18px 30px;max-width:380px;scrollbar-width:thin}
+  .rcol .card{margin-bottom:12px}
+  .rsearch{position:sticky;top:0;z-index:2;background:var(--bg);padding-bottom:10px}
+  .rsearch input{width:100%;padding:11px 16px;border-radius:24px;font-size:15px}
+  .toasts{position:fixed;left:50%;right:auto;transform:translateX(-50%);bottom:24px;width:min(440px,90vw)}
+  .sheet{align-items:center;justify-content:center}
+  .sheet .panel{max-width:640px;border-radius:22px;max-height:90%;border:1px solid var(--line)}
+  .modal .box{max-width:440px}
+  .full{align-items:center;padding-top:60px}
+  .full>*{width:100%;max-width:560px}
+  .tut .tip{left:auto;right:auto;width:360px}
+}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 
@@ -455,17 +530,21 @@ canvas.spark{width:100%;height:80px;display:block;margin:8px 0}
   <div class="phone">
     <div class="screen" id="screen">
       <header class="top">
+        <div class="strip">
+          <span class="st" title="Data e ora della simulazione"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg><span id="hClock" class="num">—</span></span>
+          <span class="st" title="Follower"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="9" r="3.2"/><path d="M3.5 19c.6-3.2 2.8-5 5.5-5s4.9 1.8 5.5 5"/><circle cx="17" cy="9.5" r="2.5"/><path d="M16 14.2c2.3.2 4 1.8 4.5 4.8"/></svg><b id="hFollow" class="num">0</b></span>
+          <button class="st" id="hWallet" title="Portafoglio"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="6" width="18" height="13" rx="2.5"/><path d="M16 12.5h2.5M3 9.5h18"/></svg><span id="hEur" class="num"></span><span id="hNero" class="num nero"></span></button>
+        </div>
         <div class="brandrow">
           <button class="av" id="meBtn" aria-label="Il tuo profilo" style="width:34px;height:34px"></button>
           <button class="logo" id="logo" aria-label="Psyop, torna al feed">psyop<i>.</i></button>
           <div class="hright"><button class="hbtn" id="dbgBtn">Debug</button></div>
         </div>
-        <div class="strip"><span id="hClock" class="num">Giorno 1 · 08:00</span><span><b id="hFollow" class="num">0</b> follower</span><span id="hEur" class="num"></span><span id="hNero" class="num nero"></span></div>
         <div class="meters">
-          <div class="meter m-chaos" id="mChaos"><div class="row"><span>Caos</span><b class="num">0%</b></div><div class="bar"><i></i></div></div>
-          <div class="meter m-sus" id="mSus"><div class="row"><span>Sospetto</span><b class="num">0%</b></div><div class="bar"><i></i></div></div>
-          <div class="meter m-cred" id="mCred"><div class="row"><span>Credib.</span><b class="num">0%</b></div><div class="bar"><i></i></div></div>
-          <div class="meter m-noise" id="mNoise"><div class="row"><span>Rumore</span><b class="num">0%</b></div><div class="bar"><i></i></div></div>
+          <div class="meter m-chaos" id="mChaos" title="Caos nel Paese" role="img" aria-label="Caos"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3c1 3.5 5 5.5 5 10a5 5 0 0 1-10 0c0-2.4 1.3-3.9 2.5-5 .3 1.6 1 2.6 2 3-.4-3 .1-5.6.5-8z"/></svg><div class="bar"><i></i></div><b class="num">0</b></div>
+          <div class="meter m-sus" id="mSus" title="Sospetto della moderazione" role="img" aria-label="Sospetto"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12z"/><circle cx="12" cy="12" r="2.8"/></svg><div class="bar"><i></i></div><b class="num">0</b></div>
+          <div class="meter m-cred" id="mCred" title="Credibilità" role="img" aria-label="Credibilità"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l7.5 3v5.5c0 4.5-3.2 8.2-7.5 9.5-4.3-1.3-7.5-5-7.5-9.5V6z"/><path d="M8.5 12l2.5 2.5 4.5-5"/></svg><div class="bar"><i></i></div><b class="num">0</b></div>
+          <div class="meter m-viral" id="mViral" title="Viralità: più sei virale, più veloce va il mondo" role="img" aria-label="Viralità"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2.5L5 13.5h6l-1 8 8-11h-6z"/></svg><div class="bar"><i></i></div><b class="num">0</b></div>
         </div>
       </header>
 
@@ -485,12 +564,15 @@ canvas.spark{width:100%;height:80px;display:block;margin:8px 0}
       </main>
 
       <nav class="tabs" aria-label="Navigazione">
-        <button class="tab on" data-v="feed"><svg viewBox="0 0 24 24"><path d="M3 11l9-7 9 7v9h-6v-6H9v6H3z"/></svg>Home</button>
-        <button class="tab" data-v="search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"/><path d="M20 20l-4.5-4.5"/></svg>Cerca</button>
-        <button class="tab plus" id="plus" aria-label="Scrivi un post"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button>
-        <button class="tab" data-v="dm"><svg viewBox="0 0 24 24"><path d="M4 6h16v10H9l-5 4z"/></svg>Messaggi<span class="badge" id="dBadge" hidden>0</span></button>
-        <button class="tab" data-v="notif"><svg viewBox="0 0 24 24"><path d="M6 16V11a6 6 0 0 1 12 0v5l2 2H4zM10 20a2 2 0 0 0 4 0"/></svg>Notifiche<span class="badge" id="nBadge" hidden>0</span></button>
+        <button class="tab on" data-v="feed" aria-label="Home"><svg viewBox="0 0 24 24"><path d="M3 11l9-7 9 7v9h-6v-6H9v6H3z"/></svg><span class="tl">Home</span></button>
+        <button class="tab" data-v="search" aria-label="Cerca"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"/><path d="M20 20l-4.5-4.5"/></svg><span class="tl">Cerca</span></button>
+        <button class="tab plus" id="plus" aria-label="Pubblica"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg><span class="tl">Pubblica</span></button>
+        <button class="tab" data-v="dm" aria-label="Messaggi"><svg viewBox="0 0 24 24"><path d="M4 6h16v10H9l-5 4z"/></svg><span class="tl">Messaggi</span><span class="badge" id="dBadge" hidden>0</span></button>
+        <button class="tab" data-v="notif" aria-label="Notifiche"><svg viewBox="0 0 24 24"><path d="M6 16V11a6 6 0 0 1 12 0v5l2 2H4zM10 20a2 2 0 0 0 4 0"/></svg><span class="tl">Notifiche</span><span class="badge" id="nBadge" hidden>0</span></button>
+        <button class="tab dsk" data-v="me" aria-label="Profilo"><svg viewBox="0 0 24 24"><circle cx="12" cy="8.5" r="3.8"/><path d="M4.5 20c.9-4 3.8-6.2 7.5-6.2s6.6 2.2 7.5 6.2"/></svg><span class="tl">Profilo</span></button>
+        <button class="tab dsk" id="infoBtn" aria-label="Come funziona"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 11v5.5M12 7.8v.4"/></svg><span class="tl">Come funziona</span></button>
       </nav>
+      <aside class="rcol" id="rcol" aria-label="Tendenze e ultim'ora"></aside>
 
       <div class="toasts" id="toasts" aria-live="polite"></div>
       <div id="layer"></div>
@@ -845,6 +927,79 @@ const TEXT_DEFAULT={
   ads:["product packshot","supplement bottles","mattress","shopping bags"],
   credit:true
  },
+ reactions:{
+  _note:["Reazioni della società, stile Plague Inc: quando abbastanza persone credono a una narrativa (at = % della popolazione) esce una notizia e la gente comune ne parla. Ordinate dalla più lieve alla più forte."],
+  cantina:[
+   {at:2,news:"Trattorie con cantina, prenotazioni in calo del 40%: 'Ci chiedono cosa c'è sotto'",post:"Siamo andati a cena fuori e mia suocera ha chiesto se avevano una cantina. Il cameriere ci ha guardato malissimo."},
+   {at:5,news:"Boom di app di localizzazione per bambini: +600% di download in una settimana",post:"Al compleanno di mio figlio metà dei genitori non ha lasciato i bambini nemmeno un minuto. Abbiamo mangiato la torta in piedi, in cerchio."},
+   {at:9,news:"Clienti chiedono di ispezionare le cucine e le cantine dei ristoranti: il Comune di {citta} cerca regole",post:"Il pizzaiolo sotto casa ha messo un cartello: 'Non abbiamo cantine, non abbiamo segreti, abbiamo solo la margherita'."},
+   {at:14,news:"Il Comune di {citta} sigilla le cantine dei locali 'per tranquillità pubblica'. I ristoratori: 'Ci teniamo il vino'",post:"Ieri sera tutta la via davanti alla trattoria a filmare la porta del magazzino. Era il magazzino."}],
+  collaboratore:[
+   {at:2,news:"Fiaccolate per Davide Rinaldi in 30 città. Molti partecipanti: 'Non sapevo chi fosse fino a ieri'",post:"Sono passata davanti alla sede del Fronte e c'erano candele e cartelli con la foto di Rinaldi. Nessuno sembrava conoscerlo."},
+   {at:5,news:"Raccolta fondi 'Verità per Davide': 400.000 euro in tre giorni, destinazione ignota",post:"Mio zio ha donato 50 euro per 'la verità su Davide'. Gli ho chiesto a chi. Ha detto 'a quelli giusti'."},
+   {at:9,news:"Iscrizioni al Fronte Democratico in calo del 20%: 'Al lavoro ci chiamano assassini'",post:"Ho tolto la spilla del partito dallo zaino. Non per vergogna. Per stanchezza."},
+   {at:14,news:"Scorta per i dirigenti del Fronte Democratico dopo le minacce. La famiglia Rinaldi chiede di fermarsi",post:"La madre di Rinaldi ha parlato in tv. Ha chiesto di smettere. Nei commenti le hanno dato della comparsa."}],
+  soccorritori:[
+   {at:2,news:"Donazioni alla Protezione Civile in calo del 30%: 'Ci scrivono che è tutto recitato'",post:"Volevo donare per l'alluvione ma mio cognato mi ha mandato il video dei 'volontari attori'. Non ho più donato. Non so se ho fatto bene."},
+   {at:5,news:"Volontari smettono di indossare la pettorina gialla: 'Ci riconoscono e ci filmano'",post:"Faccio il volontario da 12 anni. Oggi ho spalato fango in felpa grigia, così nessuno mi fotografa."},
+   {at:9,news:"Corsi di primo soccorso deserti a {citta}: iscrizioni dimezzate",post:"Al corso di primo soccorso eravamo in tre. L'istruttore ha detto che l'anno scorso eravamo trenta."},
+   {at:14,news:"Nuova alluvione a {citta}: le squadre arrivano in borghese, senza telecamere e senza nome",post:"Mia nonna è stata salvata da un ragazzo senza divisa che non ha voluto dire come si chiamava. Aveva paura."}],
+  laboratorio:[
+   {at:2,news:"Mascherine FFP3 esaurite nelle farmacie intorno a Camp Ardea",post:"In farmacia c'era la fila per le mascherine. Non c'è nessuna epidemia. C'è un post."},
+   {at:5,news:"Mascherine anche all'aperto: vendite +700% in tre province. 'Meglio esagerare'",post:"Oggi in metro metà vagone aveva la mascherina e l'altra metà guardava male chi ce l'aveva. Il virus della base ha già vinto."},
+   {at:9,news:"Genitori ritirano i figli dalle scuole vicine a Camp Ardea: aule mezze vuote",post:"Ho cambiato strada per non passare davanti alla base. Ci metto 20 minuti in più. Non so neanche cosa sto evitando."},
+   {at:14,news:"Il valore delle case intorno a Camp Ardea crolla del 35%. Agenzie: 'Nessuno vuole vivere vicino al laboratorio'",post:"Abbiamo messo in vendita casa. L'agente ha chiesto: 'Ma è dalla parte della base?'. Sì. Allora niente."}],
+  piano:[
+   {at:2,news:"'Il Piano' venduto su chiavetta USB ai mercati rionali: 5 euro, 'prima che lo tolgano'",post:"Al mercato vendono 'Il Piano' su chiavetta accanto alle calze. Mio padre ne ha comprate due. Una per il vicino."},
+   {at:5,news:"Vaccinazioni antinfluenzali tra gli over 65 in calo del 18%",post:"Il mio medico ha detto che quest'anno metà dei suoi pazienti anziani ha rifiutato il vaccino. Citavano tutti lo stesso minuto del video."},
+   {at:9,news:"Farmacie, boom di integratori 'naturali' contro il virus: scaffali vuoti",post:"Mia madre ha speso 90 euro di integratori 'consigliati nel Piano'. Sul barattolo c'è scritto 'non è un medicinale'."},
+   {at:14,news:"Pediatri: 'Ci chiedono certificati per non vaccinare'. Focolai di morbillo in tre scuole",post:"Nella classe di mia figlia sono a casa in sei. Morbillo. Nel 2026."}],
+  voto:[
+   {at:2,news:"VotoFacile, disinstallazioni record: 'Voglio la scheda di carta'",post:"Ho disinstallato VotoFacile. Non so perché. Tutti lo stavano facendo."},
+   {at:5,news:"Domande per fare lo scrutatore +300%: 'Vogliamo controllare'",post:"Mia cugina si è iscritta come scrutatrice 'per sorvegliare'. Non ha mai votato in vita sua."},
+   {at:9,news:"Cartelli 'Io non riconosco' sui balconi di {citta}",post:"Sul balcone di fronte hanno appeso un lenzuolo: 'Voto rubato'. Accanto, le mutande stese. Il Paese reale."},
+   {at:14,news:"Code ai seggi alle suppletive: elettori fotografano la scheda 'come prova'. Il Viminale: 'È reato'",post:"Ho visto un signore fotografare la scheda nel seggio. L'hanno fermato. Diceva che era per 'il gruppo'."}],
+  clima:[
+   {at:2,news:"Estintori domestici, vendite +400% nelle zone degli incendi",post:"Mio padre ha comprato tre estintori e una tuta ignifuga. Viviamo al terzo piano, in città."},
+   {at:5,news:"#scieDelGiorno: migliaia di persone fotografano il cielo ogni mattina",post:"Il gruppo del condominio ogni mattina alle 7 si riempie di foto del cielo. Oggi era nuvoloso. Si sono preoccupati lo stesso."},
+   {at:9,news:"Allerta meteo ignorata a {citta}: 'Tanto è finta'. Soccorsi in difficoltà",post:"C'era l'allerta rossa e mio zio è andato a pescare. Dice che le allerte servono a provare l'arma."},
+   {at:14,news:"Agricoltori coprono i campi con teli 'anti-raggio'. La Coldiretti: 'Rovinano il raccolto'",post:"Tutti i campi intorno al paese sono coperti di teli argentati. Da lontano sembra un'astronave. Da vicino, una perdita di soldi."}],
+  firstlady:[
+   {at:2,news:"Edicole: esaurite le riviste con le foto d'infanzia di Isabella Velluti",post:"Al bar due signori sfogliavano una rivista con le foto di Isabella Velluti da bambina e la ingrandivano col telefono."},
+   {at:5,news:"La serie 'La vera Isabella' prima nelle classifiche dei podcast",post:"Mio fratello ascolta 'La vera Isabella' in macchina. Ieri mi ha spiegato per 40 minuti il naso nelle foto del 1987."},
+   {at:9,news:"Cancellate le apparizioni pubbliche della moglie del Premier 'per motivi di sicurezza'",post:"Doveva venire a inaugurare la biblioteca. Hanno annullato. Il cartello dice 'per motivi organizzativi'. Tutti sanno quali."},
+   {at:14,news:"Moda social: chiedere i documenti agli sconosciuti 'per sicurezza'. La Polizia: 'Non fatelo'",post:"Al matrimonio di mia cugina un invitato ha chiesto alla sposa di 'vedere le foto da piccola'. Era uno scherzo. Forse."}],
+  ville:[
+   {at:2,news:"Petizione 'Basile dimettiti': un milione di firme in 24 ore",post:"Ho firmato la petizione contro Basile. Poi ho letto la smentita. Non si può togliere la firma."},
+   {at:5,news:"Commercialisti: 'Clienti chiedono di non pagare le tasse: se ruba lui...'",post:"Il mio idraulico non mi ha fatto la fattura. Ha detto: 'Tanto le ville se le compra Basile'."},
+   {at:9,news:"Pellegrinaggi alle 'ville del ministro' in Sardegna: sono di proprietari privati",post:"Sono passati due pullman davanti alla villa dei vicini 'a vedere le ville di Basile'. I vicini sono pensionati di Stoccarda."},
+   {at:14,news:"Entrate fiscali di novembre in calo del 6%. Il MEF: 'Effetto sfiducia'",post:"Mia madre ha deciso di non pagare l'IMU 'per protesta'. Le arriverà la multa. Protesterà anche contro quella."}],
+  inutile:[
+   {at:2,news:"Iscrizioni ai movimenti giovanili ai minimi storici",post:"Al liceo il collettivo si è sciolto. Erano rimasti in due e uno ha detto 'tanto non serve'."},
+   {at:5,news:"Boom di app di meditazione, materassi e corsi 'per staccare': +200% tra i 18-25enni",post:"Il mio coinquilino ha speso 300 euro in un materasso 'per chi non si alza più'. Si è alzato per andarlo a ritirare. Già qualcosa."},
+   {at:9,news:"Sondaggio: il 46% dei ventenni non sa nemmeno quando si vota",post:"Ho chiesto ai miei amici quando si vota. Uno ha risposto 'chi?'. Un altro 'perché?'."},
+   {at:14,news:"Suppletive, affluenza al 19%. Vince il candidato con 9.000 voti su 100.000 aventi diritto",post:"Oggi si votava nel mio collegio. Il seggio era vuoto. Lo scrutatore giocava al telefono. Anche io."}]
+ },
+ voices:{
+  _note:["Voci di gente comune che parla delle narrative (si aggiungono alle frasi degli stadi)."],
+  cantina:["Ma alla fine nella cantina di Da Nando qualcuno ci è entrato o no?","Mia sorella dice che la storia della cantina è vera perché 'troppa gente ne parla'.","Non credo alla cantina, ma da Nando non ci vado più. Non si sa mai.","Ho cercato 'Da Nando' su Psyop: 18.000 post. Su Google Maps: 4,3 stelle."],
+  collaboratore:["Io su Rinaldi non so cosa pensare. Però è strano, ammettetelo.","Ogni volta che muore qualcuno di politica parte la stessa storia. Stavolta però...","Il caso Rinaldi è diventato più famoso di Rinaldi.","Ho visto 6 video sul caso Rinaldi. In ognuno l'ora della morte è diversa."],
+  soccorritori:["Quella volontaria della foto ce l'ha mia zia su Facebook. Dice che è vera. Ma mia zia è complice?","Non so se i volontari sono attori, ma i video sono troppo belli per essere veri.","Ho smesso di donare. Non perché ci credo, ma perché non so più a chi credere.","Se è tutto recitato, chi ha spalato il fango a casa di mia madre?"],
+  laboratorio:["Io abito a 10 km da Camp Ardea. Devo preoccuparmi o no? Rispondete seri.","Non ho mai saputo che ci fosse una base vicino casa. Adesso non penso ad altro.","Il governo di Valdania mente sempre, ma stavolta forse no?","Mia madre tiene la finestra chiusa da una settimana 'per la base'."],
+  piano:["Ho visto Il Piano per farmi una risata. A metà non ridevo più.","Il Piano è falso, lo so. Però quella parte sulle mascherine...","Mio padre ha fatto vedere Il Piano a tutto il circolo delle bocce.","Lo hanno rimosso 40 volte. Questo è già un indizio, no?"],
+  voto:["Non dico che le elezioni sono truccate. Dico che non mi fido di un'app.","Mio nonno voleva votare con la penna sua 'perché quella del seggio si cancella'.","Se l'app VotoFacile funziona, perché il codice è segreto? Domanda onesta.","Io voto sempre. Quest'anno non so. Mi sembra inutile se decidono loro."],
+  clima:["Gli incendi ci sono sempre stati. Però quel raggio di luce nella foto...","Ho guardato il cielo per mezz'ora. Ho visto un aereo. Ora sono preoccupato.","L'arma climatica no, dai. Però perché proprio lì dove volevano costruire?","Mio cugino ha fatto ingrandire la foto dell'incendio. È diventata solo pixel. Lui ci vede un satellite."],
+  firstlady:["Ma a voi cosa cambia chi era Isabella Velluti da piccola?","Io non ci credo, ma la serie è fatta benissimo. Sono alla puntata 6.","Ogni volta che vedo la moglie del Premier in tv ora la guardo diversamente. Odio questa cosa.","Hanno pubblicato le foto d'infanzia. 'Ritoccate', dicono. Ovviamente."],
+  ville:["Le ville di Basile esistono o no? Chiedo perché ho firmato.","Anche se fosse falso, uno come Basile se lo merita. Questo dicono tutti al bar.","Il whistleblower di ieri era anche in un video di cosmetici. Lo stesso.","Le ricevute erano false. Ma la rabbia era vera. Questo conta, no?"],
+  inutile:["non voto da tre anni e la mia vita è uguale. quindi?","Mi hanno chiesto se vado a votare. Ho risposto 'a che serve'. Non ho saputo dire a chi l'ho sentito dire per primo.","Ormai è tutto deciso, si vede da come ne parlano.","Ho smesso di leggere le notizie. Sto meglio. Credo."]
+ },
+ tutorial:[
+  {sel:"#feed",title:"Il tuo feed",text:"Scorri i post. L'algoritmo impara da quello che guardi e ti mostra di più di ciò che ti trattiene."},
+  {sel:"#plus",title:"Pubblica",text:"Scegli una narrativa, un pubblico e una bozza. Più è estrema, più si diffonde e più ti espone."},
+  {sel:".meters",title:"I tuoi indicatori",text:"Caos, Sospetto, Credibilità, Viralità. Più sei virale, più veloce va il mondo."},
+  {sel:".tab[data-v=dm]",title:"Messaggi",text:"Partiti, agenzie e sconosciuti ti scriveranno. Le tue risposte cambiano la storia. Puoi anche scrivere tu a chiunque."},
+  {sel:null,title:"Cinque finali",text:"Ban, caos totale, smascherato, diventare tu il complotto, indagato. Come ci arrivi dipende da te."}
+ ],
  consent:{
   title:"Prima di entrare",
   intro:"Psyop è un simulatore di social network usato per studiare come le persone diffondono e reagiscono alla disinformazione. Durante la sessione il simulatore registra la tua attività in forma anonima.",
@@ -1199,7 +1354,7 @@ function L(type,data){
 function stateSnap(){
   if(!S)return null;const N=NARR();
   const top=N.map((n,k)=>[n.id,+(S.adopt[k]*100).toFixed(1),S.stage[k]]).sort((a,b)=>b[1]-a[1]).slice(0,4);
-  return{chaos:+S.chaos.toFixed(1),sus:+S.sus.toFixed(1),cred:+S.cred.toFixed(1),noise:+(S.noise*100).toFixed(1),
+  return{chaos:+S.chaos.toFixed(1),sus:+S.sus.toFixed(1),cred:+S.cred.toFixed(1),viral:+S.viral.toFixed(1),tempo:+S.tempo.toFixed(2),noise:+(S.noise*100).toFixed(1),
     followers:Math.round(followers()),eur:+S.eur.toFixed(2),nero:+S.nero.toFixed(2),attention:+S.attention.toFixed(1),
     fear:+(S.pop.agg.fear*100).toFixed(1),trust:+(S.pop.agg.trust*100).toFixed(1),top,posts:S.posts};
 }
@@ -1301,7 +1456,7 @@ function newState(name){
     sus:0,cred:55,eur:20,nero:0,bzc:0,price:1,hist:[],views:0,posts:0,mine:[],badge:false,prop:0,auto:false,cam:true,real:false,camOffAt:0,
     pop:new Population(ri(1,1e9)),ranker:new Ranker(),mod:new Moderator(),ads:new AdMarket(),
     stage:new Array(K).fill(0),adopt:new Array(K).fill(0),mobil:new Array(K).fill(0),boost:new Array(K).fill(0),debunk:new Array(K).fill(0),recent:new Array(K).fill(0),
-    chaos:0,bonus:0,noise:0,slop:0,queue:[],unlock:[],chats:{},events:[],notifs:[],unread:0,dms:{},lastDm:-30,log:[],following:new Set(),blocked:new Set(),saved:new Set(),ended:false,cool:0,adFree:false,partner:false,penalty:false,
+    chaos:0,bonus:0,noise:0,viral:0,momentum:0,tempo:1,acc:0,reacted:{},reactAt:{},slop:0,queue:[],unlock:[],chats:{},events:[],notifs:[],unread:0,dms:{},lastDm:-30,log:[],following:new Set(),blocked:new Set(),saved:new Set(),ended:false,cool:0,adFree:false,partner:false,penalty:false,
     meme:false,memeAt:0,t:8,speed:1,newCount:0,bio:null,flows:[],attention:0,fenice:false,contracts:[],polls:null,pollHist:[],elections:{day:21,done:false},dash:false,victims:0,
     next:{live:4,debunk:60,ad:110,auto:22,news:20,face:150},gm:0,flash:null,attWarn:0,feedMode:'foryou'};
 }
@@ -1334,7 +1489,8 @@ function npcNarr(person){
   const b=S.pop.bel(ag,k),st=clamp(S.stage[k]+(b>.85?1:0)-(b<.4?1:0),0,4);
   const a=person||agentPerson(ag);
   const p=newPost({author:a,kind:'narr',narrIdx:k,stage:st,a:st*2+1,near:!!S.pop.fol[ag]});
-  let cl=claimFor(k,st);if(st<=2&&chance(.22)){const h=trendLine('hook');if(h)cl=h+' '+cl}
+  let cl=claimFor(k,st);const vv=TEXT.voices&&TEXT.voices[NARR()[k].id];if(vv&&vv.length&&S.stage[k]>=1&&chance(.3)&&(!person||person.type!=='bot'))cl=fill(pick(vv));
+  else if(st<=2&&chance(.22)){const h=trendLine('hook');if(h)cl=h+' '+cl}
   p.text=voice(a.type,cl);p.tag=chance(.25)&&trendHash()||pick(NARR()[k].tags);
   if(chance(.4)){const real=realMedia(p.narr);p.media=real||{kind:pick(MEDIA_K[p.narr]||['chat']),seed:ri(1,1e9),video:chance(.3),k}}
   counts(p,ri(300,4000)*(1+st)*(1+S.adopt[k]*12));
@@ -1414,7 +1570,7 @@ function adData(face){
 /* ================= icone e rendering ================= */
 const IC={reply:'<svg viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z"/></svg>',rt:'<svg viewBox="0 0 24 24"><path d="M7 17V8h10l-3-3M17 7v9H7l3 3"/></svg>',like:'<svg viewBox="0 0 24 24"><path d="M12 20s-7-4.5-7-10a4 4 0 0 1 7-2.5A4 4 0 0 1 19 10c0 5.5-7 10-7 10z"/></svg>',eye:'<svg viewBox="0 0 24 24"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>',save:'<svg viewBox="0 0 24 24"><path d="M6 3h12v18l-6-4-6 4z"/></svg>',quote:'<svg viewBox="0 0 24 24"><path d="M5 19l4-4h10V5H5z"/><path d="M9 9h6M9 12h4"/></svg>',
  vf:'<svg class="vf" viewBox="0 0 24 24" aria-label="verificato"><path d="M12 2l2.4 2.2 3.2-.4.9 3.1 2.9 1.5-1 3.1 1 3.1-2.9 1.5-.9 3.1-3.2-.4L12 22l-2.4-2.2-3.2.4-.9-3.1-2.9-1.5 1-3.1-1-3.1 2.9-1.5.9-3.1 3.2.4z"/><path class="tk" d="M8 12l3 3 5-6"/></svg>',
- cam:'<svg viewBox="0 0 24 24"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>',back:'<svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg>',play:'<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>',msg:'<svg viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z"/></svg>',bell:'<svg viewBox="0 0 24 24"><path d="M6 16V11a6 6 0 0 1 12 0v5l2 2H4z"/></svg>',euro:'<svg viewBox="0 0 24 24"><path d="M17 6a7 7 0 1 0 0 12M4 10h10M4 14h10"/></svg>'};
+ free:'<svg viewBox="0 0 24 24" aria-label="Organico"><path d="M12 21c-5-3-8-7-8-11a4 4 0 0 1 8-1 4 4 0 0 1 8 1c0 4-3 8-8 11z" fill="none" stroke="currentColor" stroke-width="2"/></svg>',img:'<svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-9 8"/></svg>',cam:'<svg viewBox="0 0 24 24"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>',back:'<svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg>',play:'<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>',msg:'<svg viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z"/></svg>',bell:'<svg viewBox="0 0 24 24"><path d="M6 16V11a6 6 0 0 1 12 0v5l2 2H4z"/></svg>',euro:'<svg viewBox="0 0 24 24"><path d="M17 6a7 7 0 1 0 0 12M4 10h10M4 14h10"/></svg>'};
 const chip=(l,t)=>`<div class="chip"><span class="lt">${l}</span>${esc(t)}</div>`;
 function avHTML(p,cls='',style=''){
   const isMe=S&&p.handle===S.handle;
@@ -1582,8 +1738,8 @@ function openCompose(quoteId){
 function statBars(d){return ''}// i punteggi restano calcolati e finiscono nel log, ma non si vedono
 function renderCompose(){
   const C=TEXT.communities,cpm=S.ads.cpm(S.pop.agg.fear);
-  const narrs=NARR().map((n,k)=>`<button class="nchip ${k===comp.k?'on':''}" data-n="${k}">${esc(n.name)}<small>${esc(n.tags[0])} · ${fmt((S.adopt[k]*S.pop.N*SCALE+2000)*2.4)} post</small>${n.ref?`<small>${esc(n.ref)}</small>`:''}</button>`).join('');
-  const targets=`<button class="${comp.target<0?'on':''}" data-t="-1">Tutti<small>${pct(fitOf(comp.k,-1),0)} ricettivi</small></button>`+C.map((c,i)=>`<button class="${comp.target===i?'on':''}" data-t="${i}">${esc(c.name)}<small>${pct(fitOf(comp.k,i),0)} ricettivi</small></button>`).join('');
+  const narrs=NARR().map((n,k)=>`<button class="nchip ${k===comp.k?'on':''}" data-n="${k}">${esc(n.name)}<small>${esc(n.tags[0])}</small></button>`).join('');
+  const targets=`<button class="${comp.target<0?'on':''}" data-t="-1">Tutti</button>`+C.map((c,i)=>`<button class="${comp.target===i?'on':''}" data-t="${i}" title="${esc(c.desc)}">${esc(c.name)}</button>`).join('');
   const q=comp.quote&&POSTS[comp.quote];
   const drafts=comp.free?(()=>{const d=freeDraft();return `<div class="draft"><div class="fmt"><span>Scritto da te</span></div><textarea id="freeTxt" aria-label="Testo del post" placeholder="Scrivi il tuo post.">${esc(comp.freeText)}</textarea><div id="freeStats">${statBars(d)}</div><button class="btn" id="freePub" ${comp.freeText.trim().length<8?'disabled':''}>Pubblica</button></div>`})()
     :comp.drafts.map((d,i)=>`<div class="draft"><div class="fmt"><span>${esc(d.fmt)}</span><em>${TEXT.stageNames[d.stage]}</em></div><p>${esc(d.text)} <span class="tag">${esc(d.tag)}</span></p>${statBars(d)}
@@ -1591,13 +1747,13 @@ function renderCompose(){
   layer.innerHTML=`<div class="sheet" id="sheet"><div class="panel"><button class="close-x" id="cx" aria-label="Chiudi">×</button><h3>${q?'Cita il post':'Nuovo post'}</h3>
   ${q?`<div class="quote" style="margin-top:8px"><b>${esc(q.author.name)}</b><br>${esc((q.text||'').slice(0,140))}</div>`:''}
   <div class="lbl">Narrativa</div><div class="narrs">${narrs}</div>
-  <div class="lbl">Pubblico (micro-targeting)</div><div class="targets">${targets}</div>
-  <div class="lbl">Sponsorizzazione · CPM attuale ${eur(cpm)}</div>
-  <div class="seg" id="budget">${[0,10,30,80].map(b=>`<button class="${comp.budget===b?'on':''}" data-b="${b}" ${b>S.eur?'disabled':''}>${b?b+' €':'Organico'}</button>`).join('')}</div>
-  <div class="camrow">${comp.photo&&S.photo?`<img alt="" src="${S.photo}">`:`<div class="camicon" style="width:44px;height:44px;margin:0">${IC.cam}</div>`}<div class="t"><b>Allega una foto come "prova"</b><br><small>${comp.photo?'Allegata. Viralità +2.':'Fotocamera del telefono. Viralità +2.'}</small></div><button class="btn ${comp.photo?'ghost':''}" id="attach">${comp.photo?'Rimuovi':'Scatta'}</button></div>
-  ${realCount(NARR()[comp.k].id)?`<div class="camrow"><div class="camicon" style="width:44px;height:44px;margin:0">${IC.play}</div><div class="t"><b>Allega un video o una foto reale</b><br><small>${comp.real?'Allegato dalla libreria. Viralità +2.':realCount(NARR()[comp.k].id)+' foto disponibili per questa narrativa (libreria e web).'}</small></div><button class="btn ${comp.real?'ghost':''}" id="realBtn">${comp.real?'Rimuovi':'Allega'}</button></div>`:''}
-  <div class="lbl" style="display:flex;justify-content:space-between"><span>Bozze dell'algoritmo</span></div>
-  <div class="seg" style="margin-bottom:8px"><button class="${comp.free?'':'on'}" id="mDraft">Bozze</button><button class="${comp.free?'on':''}" id="mFree">Scrivi tu</button></div>
+  <div class="lbl">Pubblico</div><div class="targets">${targets}</div>
+  <div class="tools">
+    <div class="seg" id="budget" title="Sponsorizzazione">${[0,10,30,80].map(b=>`<button class="${comp.budget===b?'on':''}" data-b="${b}" ${b>S.eur?'disabled':''}>${b?b+' €':IC.free}</button>`).join('')}</div>
+    <button class="ibtn ${comp.photo?'on':''}" id="attach" title="${comp.photo?'Togli la foto':'Allega una foto dalla fotocamera'}" aria-label="Foto dalla fotocamera">${comp.photo&&S.photo?`<img alt="" src="${S.photo}">`:IC.cam}</button>
+    ${realCount(NARR()[comp.k].id)?`<button class="ibtn ${comp.real?'on':''}" id="realBtn" title="${comp.real?'Togli l\'immagine':'Allega un\'immagine reale'}" aria-label="Immagine reale">${IC.img}</button>`:''}
+  </div>
+  <div class="seg" style="margin:12px 0 8px"><button class="${comp.free?'':'on'}" id="mDraft">Bozze</button><button class="${comp.free?'on':''}" id="mFree">Scrivi tu</button></div>
   <div class="drafts">${drafts}</div>
   ${comp.free?'':'<div class="rowbtns" style="margin-top:10px"><button class="btn ghost" id="redo">Altre bozze</button></div>'}</div></div>`;
   $('#cx').onclick=()=>{L('compose_cancel',{narr:NARR()[comp.k].id,afterMs:BEH.composeAt?Date.now()-BEH.composeAt:null});closeLayer()};$('#sheet').onclick=e=>{if(e.target.id==='sheet')closeLayer()};
@@ -1623,6 +1779,7 @@ function publish(d,auto=false){
   const infl=3.1*(.85+rnd()*.3);// la piattaforma conta come "visualizzazione" anche 0,5 secondi di autoplay
   const views=(res.exposed*SCALE*.55+S.bots*30)*infl,rt=res.shares*SCALE*.06+S.bots*1.8,likes=res.eng*SCALE*.25+S.bots*4,cms=res.eng*SCALE*.02;
   S.folN+=res.newF;
+  S.momentum=Math.min(45,S.momentum+clamp(res.rate*60+res.amp/40+res.shares/20,2,25)*(auto?.4:1));
   const F=FMT_P[d.fi]||{};let lex=d.A?d.A.lex:analyzeText(d.text).lex;if(F.ironic)lex*=.3;
   if(F.slop){S.slop=Math.min(.5,S.slop+.05);for(let s=0;s<90;s++){const i=Math.floor(Math.random()*P.N);P.susc[i]=Math.min(1,P.susc[i]+.025)}}
   if(F.ironic&&res.rate>.18&&!S.unlock[k]){S.unlock[k]=true;setTimeout(()=>toast(`Il meme è diventato virale: ora le bozze su "${NARR()[k].name}" possono essere più esplicite.`,'good'),900)}
@@ -1667,7 +1824,9 @@ $('#pill').onclick=()=>{L('new_posts_open',{n:S.queue.length});setFeedMode('fory
 
 function candidate(){
   const c=S.chaos;
-  const kind=wpick([['normal',40*(1-c/140)],['narr',18+26*c/100],['meme',8],['pol',4+7*c/100],['news',6],['fact',5],['prop',3+5*c/100],['ad',S.adFree?2:8]]);
+  // circa 3 contenuti su 4 riguardano i complotti (narrative, smentite, notizie collegate, reazioni)
+  const kind=wpick([['narr',56+8*c/100],['nnews',9],['fact',8],['normal',11*(1-c/200)],['meme',5],['pol',3+4*c/100],['prop',3],['news',2],['ad',S.adFree?2:4]]);
+  if(kind==='nnews'){const k=narrPick(),n=NARR()[k];return newsPost(fill(n.news[Math.min(S.stage[k],n.news.length)-1]||n.news[0]))}
   if(kind==='normal')return npcNormal();if(kind==='narr')return npcNarr();if(kind==='meme')return npcMeme();if(kind==='pol')return polPost();
   if(kind==='news')return newsPost(chance(.35)&&trendLine('news')||fill(pick(TEXT.newsNormal)));if(kind==='fact')return factPost();if(kind==='prop')return (S.photo&&chance(.3))?faceMemePost():propPost(chance(.35));return adData(chance(.3));
 }
@@ -2015,6 +2174,20 @@ let logoTaps=0,logoT=0;$('#logo').onclick=()=>{const n=Date.now();logoTaps=n-log
 const DEBUG_ON=/debug/.test(location.hash+location.search);$('#dbgBtn').hidden=!DEBUG_ON;
 $('#dbgBtn').onclick=()=>{if(S){L('debug_open');openDebug()}};
 $('#meBtn').onclick=()=>{if(S)show('me')};
+$('#hWallet').onclick=()=>{if(S){L('wallet_open');openWallet()}};
+$('#infoBtn').onclick=()=>{if(!S)return;L('info_open');const pg=openPage('Come funziona','<div class="pbody info"><button class="btn" id="tutAgain">Rivedi il tutorial</button>'+$('.side').innerHTML+'</div>');pg.querySelector('#tutAgain').onclick=()=>{pg.remove();runTutorial(true)}};
+/* colonna destra su PC: ricerca, tendenze, di cosa si parla, cronaca, chi seguire */
+function renderRcol(){
+  const R=$('#rcol');if(!R||!S||getComputedStyle(R).display==='none')return;
+  const order=NARR().map((n,k)=>k).sort((a,b)=>S.adopt[b]-S.adopt[a]).slice(0,5);
+  if(!R.dataset.built){R.dataset.built='1';R.innerHTML=`<div class="rsearch"><input id="rIn" type="search" placeholder="Cerca su Psyop" aria-label="Cerca"></div><div id="rBody"></div>`;
+    R.querySelector('#rIn').addEventListener('keydown',e=>{if(e.key==='Enter'){L('search',{q:e.target.value.trim().slice(0,80)});show('search');renderSearch(e.target.value.trim())}})}
+  const who=Object.values(PEOPLE).filter(p=>p.agent!=null&&!S.following.has(p.handle)&&p.type!=='bot').slice(0,3);
+  R.querySelector('#rBody').innerHTML=`${trendsCard()}
+   <div class="card"><h5>Di cosa si parla</h5><ul class="trends">${order.map(k=>`<li><button class="tag" data-tag="${esc(NARR()[k].tags[0])}">${esc(NARR()[k].tags[0])}</button><span class="num">${fmt((S.adopt[k]*S.pop.N*SCALE+2000)*2.4)}</span></li>`).join('')}</ul></div>
+   ${S.events.length?`<div class="card"><h5>Ultim'ora</h5><ul class="list">${S.events.slice(0,5).map(e=>`<li><time class="num">${e.t.split('·')[1]||e.t}</time><span>${esc(e.text)}</span></li>`).join('')}</ul></div>`:''}
+   ${who.length?`<div class="card"><h5>Chi seguire</h5>${who.map(p=>`<button class="urow" data-prof="${esc(p.handle)}">${avHTML(p).replace('<button','<span').replace('</button>','</span>').replace(/data-prof="[^"]*"/,'')}<span style="min-width:0"><b>${esc(p.name)}</b><small>@${esc(p.handle)}</small></span><span></span></button>`).join('')}</div>`:''}`;
+}
 
 /* ================= modali ================= */
 async function autoCapturePhoto(){
@@ -2038,8 +2211,8 @@ function bigAd(){
 }
 
 /* ================= header e navigazione ================= */
-function meterNoise(){meter('#mNoise',S.noise*100,S.noise>.7)}
-function meter(id,v,alert){const m=$(id);m.querySelector('b').textContent=Math.round(v)+'%';m.querySelector('i').style.width=v+'%';m.classList.toggle('alert',alert)}
+function meterNoise(){meter('#mViral',S.viral,S.viral>75)}
+function meter(id,v,alert){const m=$(id);m.querySelector('b').textContent=Math.round(v);m.querySelector('i').style.width=v+'%';m.classList.toggle('alert',alert)}
 function renderHead(){
   $('#hFollow').textContent=fmt(S.real?realFollowers():followers());$('#hClock').textContent=clock();$('#hEur').textContent=eur(S.eur);
   $('#hNero').textContent=S.nero>=1?eur(S.nero)+' nero':'';
@@ -2065,6 +2238,16 @@ function step(){
   if(S.t%2===0){P.aggregate();S.adopt=P.agg.adopt;S.mobil=P.agg.mobil;S.folN=P.agg.fol;}
   S.bonus=Math.max(0,S.bonus-.02);S.slop=Math.max(0,S.slop-.002);
   S.noise=clamp(S.recent.reduce((a,b)=>a+b,0)*.05+S.slop+S.bots/120000+S.chaos/250,0,1);
+  S.momentum*=.985;
+  const fs=clamp((Math.log10(Math.max(followers(),100))-2)/4.4,0,1)*60;
+  S.viral=clamp(fs+S.momentum,0,100);
+  S.tempo=.5+S.viral/40;// da 0,5x (nessuno ti conosce) a 3x (sei ovunque)
+  // reazioni della società, stile Plague Inc
+  const RX=TEXT.reactions||{};
+  for(let k=0;k<P.K;k++){const id=NARR()[k].id,list=RX[id];if(!Array.isArray(list))continue;const done=S.reacted[id]||0;const nx=list[done];
+    if(nx&&S.adopt[k]*100>=nx.at&&S.t-(S.reactAt[id]||-99)>=10){S.reacted[id]=done+1;S.reactAt[id]=S.t;const news=fill(nx.news);L('society_reaction',{narr:id,level:done+1,at:nx.at,news});
+      cronaca(news,false);S.bonus+=.6;
+      if(nx.post)setTimeout(()=>{if(!S||S.ended)return;const ag=S.pop.mostBeliever(k,8),a=agentPerson(ag);const pp=newPost({author:a,kind:'normal',text:voice(a.type==='bot'?'normie':a.type,fill(nx.post)),react:true});counts(pp,ri(2000,40000));prependFeed(pp)},1500)}}
   S.chaos=P.chaos(S.bonus+S.victims*.5);
   S.sus=Math.max(0,S.sus-.22);
   S.attention=Math.max(0,S.attention-.035);
@@ -2103,9 +2286,9 @@ function step(){
 }
 let lastRender=0;
 function tick(){
-  if(!S||S.ended)return;for(let i=0;i<S.speed&&!S.ended;i++)step();if(S.ended)return;renderHead();behTick();logSnapTick();
+  if(!S||S.ended)return;S.acc+=S.speed*S.tempo;while(S.acc>=1&&!S.ended){S.acc-=1;step()}if(S.ended)return;renderHead();behTick();logSnapTick();
   if(S.t-lastRender>=2){lastRender=S.t;if(!$('#v-search').hidden&&!$('#sIn').value&&document.activeElement!==$('#sIn'))renderSearchRes('');renderWallet();
-    const d=pages.querySelector('[data-kind="debug"] #dst');if(d)d.innerHTML=debugState();}
+    const d=pages.querySelector('[data-kind="debug"] #dst');if(d)d.innerHTML=debugState();renderRcol();}
 }
 function end(type){
   if(S.ended)return;S.ended=true;L('ending',{ending:type,title:TEXT.ends[type].h,s:stateSnap()});logSend(false);closeLayer();const e=TEXT.ends[type],el=document.createElement('div');el.className='full end';
@@ -2136,6 +2319,7 @@ async function start(name,photo,consent){
   $('#feed').innerHTML='';closeLayer();closePages();hidePill();updBadge();setFeedMode('foryou');$('#v-search').innerHTML='';
   batch(10);renderHead();renderMeBtn();show('feed');$('#v-feed').scrollTop=0;
   if(!photo)setTimeout(autoCapturePhoto,900);
+  renderRcol();setTimeout(()=>runTutorial(false),1600);
 }
 function initSplash(){
   $('#splashTag').textContent=TEXT.app.tagline;$('#splashHow').innerHTML=TEXT.app.howto.map((h,i)=>`<li><span>${i+1}</span>${esc(h)}</li>`).join('');
@@ -2144,6 +2328,27 @@ function initSplash(){
 $('#startBtn').onclick=()=>{const v=$('#uname').value.trim().replace(/\s+/g,'_')||TEXT.app.defaultName;$('#splash').hidden=true;consentScreen(ok=>start(v,null,ok))};
 $('#uname').addEventListener('keydown',e=>{if(e.key==='Enter')$('#startBtn').click()});
 new IntersectionObserver(es=>{if(es[0].isIntersecting&&S&&!S.ended&&S.feedMode==='foryou')batch(6)},{root:$('#v-feed'),rootMargin:'400px'}).observe($('#sentinel'));
+/* tutorial breve: alla prima partita, saltabile, rivedibile da "Come funziona" */
+function runTutorial(force){
+  if(!S||S.ended)return;if(!force&&store.get('psyop.tut.done'))return;
+  const steps=TEXT.tutorial||[];if(!steps.length)return;
+  const scr=$('#screen'),el=document.createElement('div');el.className='tut';scr.append(el);let i=0;
+  const close=skipped=>{store.set('psyop.tut.done',true);if(skipped)L('tutorial',{skipped:true,atStep:i+1});el.remove()};
+  const draw=()=>{
+    const st=steps[i];L('tutorial',{step:i+1});
+    const t=st.sel?document.querySelector(st.sel):null,sr=scr.getBoundingClientRect();
+    let h=null;if(t&&t.getClientRects().length){const r=t.getBoundingClientRect();h={x:r.left-sr.left-6,y:r.top-sr.top-6,w:r.width+12,h:Math.min(r.height+12,sr.height*.42)}}
+    const last=i===steps.length-1;
+    el.innerHTML=`<div class="hole" style="${h?`left:${h.x}px;top:${h.y}px;width:${h.w}px;height:${h.h}px`:'left:50%;top:40%;width:0;height:0'}"></div><div class="tip" role="dialog" aria-label="Tutorial"><h4>${esc(st.title)}</h4><p>${esc(st.text)}</p><div class="row"><button class="skip" id="tSkip">${last?'':'Salta'}</button><span class="dots">${i+1}/${steps.length}</span><button class="btn" id="tNext">${last?'Inizia':'Avanti'}</button></div></div>`;
+    const tip=el.querySelector('.tip'),tw=Math.min(360,sr.width-32);
+    if(sr.width>=1024&&h){tip.style.left=clamp(h.x,16,sr.width-tw-16)+'px'}
+    if(!h)tip.style.top='38%';else if(h.y+h.h<sr.height*.58)tip.style.top=(h.y+h.h+12)+'px';else tip.style.bottom=(sr.height-h.y+12)+'px';
+    el.querySelector('#tNext').onclick=()=>{if(last)close(false);else{i++;draw()}};
+    const sk=el.querySelector('#tSkip');if(!last)sk.onclick=()=>close(true);
+  };
+  draw();
+}
+if(/editor/.test(location.hash))setTimeout(()=>openTextEditor(),300);
 initSplash();
 (async()=>{try{const r=await fetch('data/testi.json',{cache:'no-store'});if(r.ok){const j=await r.json();if(!store.get('psyop.text.v2')){TEXT=mergeText(deepClone(TEXT_DEFAULT),j);initSplash()}}}catch(e){}})();
 logRetryUnsent();
@@ -2295,7 +2500,7 @@ Rispondi all'ultimo messaggio di @${S.handle} come farebbe questo personaggio in
 function openChat(handle){
   const p=PEOPLE[handle];if(!p||!S)return;
   const thread=chatOf(handle);
-  const pg=openPage(p.name,`<div class="thread" id="thr"></div><div class="chatbar" style="position:sticky;bottom:68px"><input id="chIn" maxlength="300" placeholder="Scrivi a @${esc(handle)}" aria-label="Messaggio"><button class="btn" id="chSend">Invia</button></div>`);
+  const pg=openPage(p.name,`<div class="thread" id="thr"></div><div class="chatbar chatbar-page"><input id="chIn" maxlength="300" placeholder="Scrivi a @${esc(handle)}" aria-label="Messaggio"><button class="btn" id="chSend">Invia</button></div>`);
   pg.dataset.kind='chat';pg.dataset.h=handle;L('chat_open',{with:handle,type:p.type});pg.style.paddingBottom='0';
   const thr=pg.querySelector('#thr');
   const render=(typing)=>{thr.innerHTML=`<div class="dmh">${avHTML(p)}<div><b>${esc(p.name)}</b>${p.verified?IC.vf:''}<small>@${esc(p.handle)}${p.agent!=null?' · '+esc(TEXT.communities[S.pop.comm[p.agent]].name):''}</small></div></div>`+
@@ -2478,6 +2683,7 @@ function trendTerm(exclude){
 function fillTrend(s){let first=null;return String(s).replace(/\{trend\}/g,()=>first=trendTerm()).replace(/\{trend2\}/g,()=>trendTerm(first))}
 function hashOf(t){return'#'+cleanTitle(t).replace(/[«»"'’.,:;!?()\-]/g,' ').split(/\s+/).filter(Boolean).slice(0,3).map(w=>w[0].toUpperCase()+w.slice(1)).join('')}
 function trendLine(type){
+  if(!TR.items.length)return null;// tendenze non ancora caricate: chi chiama usa i testi normali
   const T=TEXT.trends,gen=TR.gen&&TR.gen[type];
   if(gen&&gen.length&&chance(.6)){const l=gen[Math.floor(Math.random()*gen.length)];return typeof l==='string'?l:l}
   const tp=T[type];if(!tp||!tp.length)return null;
