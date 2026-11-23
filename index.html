@@ -2434,11 +2434,11 @@ $('#uname').addEventListener('keydown',e=>{if(e.key==='Enter')$('#startBtn').cli
 new IntersectionObserver(es=>{if(es[0].isIntersecting&&S&&!S.ended&&S.feedMode==='foryou')batch(6)},{root:$('#v-feed'),rootMargin:'400px'}).observe($('#sentinel'));
 /* tutorial breve: alla prima partita, saltabile, rivedibile da "Come funziona" */
 function runTutorial(force){
-  if(!S||S.ended)return;if(!force&&store.get('psyop.tut.done'))return;
+  if(!S||S.ended)return;if(!force&&store.get('psyop.tut.v2'))return;
   const steps=TEXT.tutorial||[];if(!steps.length)return;
   if($('.tut'))$('.tut').remove();
   const scr=$('#screen'),el=document.createElement('div');el.className='tut';scr.append(el);let i=0,posts0=S.posts,timer=null,shown=-1;
-  const close=skipped=>{store.set('psyop.tut.done',true);L('tutorial',skipped?{skipped:true,atStep:i+1}:{done:true});clearInterval(timer);el.remove()};
+  const close=skipped=>{store.set('psyop.tut.v2',true);L('tutorial',skipped?{skipped:true,atStep:i+1}:{done:true});clearInterval(timer);el.remove()};
   const go=n=>{i=n;draw(true)};
   const inCompose=()=>!!$('#sheet');
   const draw=fresh=>{
