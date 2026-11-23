@@ -197,6 +197,7 @@ input,textarea,select{font:inherit;color:var(--ink);background:var(--surface2);b
 .targets{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none}
 .targets button{flex:none;border:1px solid var(--line);background:var(--surface);border-radius:20px;padding:6px 10px;font-size:12px;display:grid;text-align:left;gap:1px}
 .targets button small{color:var(--muted);font-size:10.5px}
+.dsk-only{display:none!important}
 .targets button.on{border-color:var(--brand);background:var(--brand-soft)}
 .seg{display:flex;gap:6px}
 .seg button{flex:1;border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:7px 4px;font-weight:700;font-size:12.5px}
@@ -368,7 +369,8 @@ canvas.spark{width:100%;height:80px;display:block;margin:8px 0}
 
 /* Media reali, chat, fotocamera */
 .media img,.media video{display:block;width:100%;height:auto;aspect-ratio:3/2;object-fit:cover;max-width:100%;background:var(--ink)}
-.media .src{position:absolute;left:8px;bottom:8px;background:rgba(0,0,0,.6);color:#fff;font-size:10.5px;padding:2px 6px;border-radius:6px}
+.media .src{position:absolute;left:8px;bottom:8px;background:rgba(0,0,0,.6);color:#fff;font-size:10.5px;padding:2px 6px;border-radius:6px;text-decoration:none}
+.media a.src:hover{background:rgba(0,0,0,.85)}
 .thread{display:flex;flex-direction:column;gap:8px;padding:12px 14px 110px}
 .thread .bubble{margin:0;max-width:85%}
 .thread .bubble.me{align-self:flex-end;margin:0}
@@ -417,7 +419,13 @@ canvas.spark{width:100%;height:80px;display:block;margin:8px 0}
 .ctext.small{font-size:13px;color:var(--muted)}
 .cbox{background:var(--bg);border-radius:14px;padding:12px 14px;font-size:13.5px;line-height:1.4}
 .cbox ul{margin:6px 0 0;padding-left:18px;display:grid;gap:4px}
-.full.consent .btn{font-size:15px;padding:13px}
+.full.consent .btn{font-size:15px;padding:13px;width:100%;border-radius:12px;color:#fff;background:var(--ink)}
+.full.consent .btn.dark{background:var(--brand);color:#fff}
+.full.consent .btn.ghost{background:var(--surface2);color:var(--ink);border:1px solid var(--line)}
+.full .stack{display:grid;gap:10px}
+.cbox.evil{background:#1C1824;color:#F2EEF8}
+.cbox.evil b{color:#FF7AC0}
+.cbox.evil .fine{display:block;margin-top:8px;font-size:12px;color:#B9B2C8;font-style:italic}
 .sessioncode{font-family:var(--f-mono);font-size:13px;background:rgba(255,255,255,.08);border-radius:10px;padding:10px 12px}
 /* Intestazione spoglia: in alto data, follower, portafoglio; poi logo; poi quattro indicatori a icona */
 .strip{display:flex;justify-content:space-between;align-items:center;gap:6px;font-size:12.5px;color:var(--muted);font-variant-numeric:tabular-nums;margin-bottom:6px}
@@ -455,6 +463,9 @@ canvas.spark{width:100%;height:80px;display:block;margin:8px 0}
 .tut .tip .dots{font-size:12px;color:var(--muted)}
 .tut .tip .btn{width:auto;padding:8px 14px}
 .tut .tip .skip{background:none;border:0;color:var(--muted);text-decoration:underline;font-size:13px}
+.tut .tip .wait{font-size:12.5px;font-weight:700;color:var(--brand);animation:tutp 1.2s ease-in-out infinite}
+@keyframes tutp{50%{opacity:.35}}
+.tut.pass .hole{box-shadow:0 0 0 9999px rgba(28,24,36,.28),0 0 0 3px var(--brand)}
 
 /* ===== PC: interfaccia da social desktop a tre colonne ===== */
 @media (min-width:1024px){
@@ -496,6 +507,10 @@ canvas.spark{width:100%;height:80px;display:block;margin:8px 0}
   .full{align-items:center;padding-top:60px}
   .full>*{width:100%;max-width:560px}
   .tut .tip{left:auto;right:auto;width:360px}
+  /* pubblico: griglia leggibile invece della striscia che scorre di lato */
+  .targets{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));overflow:visible;gap:6px}
+  .targets button{border-radius:12px;padding:8px 10px;font-size:13px;line-height:1.25}
+  .targets button small.dsk-only{display:block!important;font-size:11px;line-height:1.3;margin-top:2px;font-weight:400}
 }
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
@@ -591,7 +606,6 @@ canvas.spark{width:100%;height:80px;display:block;margin:8px 0}
 </div>
 
 <script>
-/* js/util.js */
 'use strict';
 /* Psyop · utilità condivise */
 const $=(s,r=document)=>r.querySelector(s);
@@ -619,7 +633,6 @@ const store={
 
 </script>
 <script>
-/* js/config.js */
 'use strict';
 /* Psyop · configurazione per la pubblicazione
    workerUrl: indirizzo del tuo Cloudflare Worker (vedi worker/LEGGIMI.md), senza barra finale.
@@ -634,7 +647,6 @@ const CFG={
 
 </script>
 <script>
-/* js/content.js */
 'use strict';
 /* Psyop · tutti i testi di gioco.
    Questo oggetto è modificabile dall'Editor testi (Debug → Editor testi).
@@ -677,95 +689,104 @@ const TEXT_DEFAULT={
   {id:"centro",name:"Patto Civico",leader:"Alberto Gremigni",handle:"albertogremigni",role:"Portavoce",bio:"Patto Civico. Competenza, moderazione, buonsenso. Sondaggi: 4%."}
  ],
  narratives:[
-  {id:"cantina",name:"La cantina della trattoria",ref:"Pizzagate, 2016",tech:"Cospirazione partecipativa",tags:["#cantinaGate","#salviamoliTutti","#DaNando"],act:"portare i figli alle feste",
+  {id:"cantina",name:"La trattoria che rapisce i bambini",ref:"Pizzagate, 2016",tech:"Cospirazione partecipativa",tags:["#DaNandoGate","#salviamoliTutti","#cantinaGate"],act:"portare i figli alle feste",
    affinity:[0.6,0.9,0.4,0.1,0.5,0.7,0.6,0.9],
    stages:[
-    ["Avete letto le email dell'assessore Ferraresi uscite ieri? Perché parla sempre di 'mozzarelle' e 'tavoli per i piccoli'? Chiedo.","Nelle email trapelate la parola 'pizza' compare 41 volte in un mese. Per un assessore alla cultura.","Le email di Ferraresi sono pubbliche. Leggetele voi, io non dico niente."],
-    ["Abbiamo decifrato il codice: 'mozzarella' vuol dire bambino, 'tavolo piccolo' indica l'età. Il thread completo è nel gruppo.","La trattoria Da Nando a {citta} compare in tre email. Ha una cantina che sulla piantina del Comune non c'è.","Ogni utente del gruppo ha trovato un pezzo. Ora il quadro è completo. Aiutateci a finire."],
-    ["Ho fatto un video di 40 minuti sulla cantina di Da Nando. Guardatelo prima che lo tolgano. Fate le vostre ricerche.","Il logo della trattoria è un simbolo che usano loro. Cercate 'triangolo spirale' e poi ditemi.","Sono stato da Nando. Il cameriere non mi ha guardato negli occhi. Ho capito tutto."],
-    ["Un deputato ha presentato un'interrogazione su Da Nando. Non è più una teoria, è un'indagine.","Il TG ne parla solo per dire che è falso. Perché tutta questa fretta di smentire?","Ormai lo sanno tutti. Mancano solo le manette."],
-    ["Qualcuno deve entrare in quella cantina e liberarli. Se la polizia non lo fa, lo faremo noi.","Domani a pranzo da Nando. Non per mangiare.","Chi lavora da Nando ha fatto la sua scelta. Ora noi facciamo la nostra."]],
+    ["raga ma perché l'assessore Ferraresi nelle mail scrive sempre 'mozzarelle' e 'tavolo per i piccoli'?? 🍕👀 chiedo eh","la parola PIZZA compare 41 volte in un mese nelle mail di un assessore alla CULTURA. 41. ok io vado a dormire 🙃","non dico niente. leggetevi le mail di Ferraresi e poi ditemi voi 👁️👁️"],
+    ["🧵 THREAD: 'mozzarella' = bambino. 'tavolo piccolo' = età. l'abbiamo decifrato in 3 ore nel gruppo. 1/23","Da Nando a {citta} ha una CANTINA che sulla piantina del Comune NON C'È. spiegatemi. 🚪⬇️","ognuno del gruppo ha trovato un pezzo 🧩🧩🧩 ora il puzzle è completo. ci manca solo l'ultimo. aiutateci"],
+    ["video di 40 minuti sulla cantina di Da Nando 🎥 guardatelo PRIMA che lo tolgano. fate le vostre ricerche!!!","il logo di Da Nando è un triangolo con la spirale 🔺🌀 cercate cosa vuol dire. io non ci dormo","sono andato da Nando. il cameriere non mi ha guardato negli occhi. HO CAPITO TUTTO"],
+    ["un deputato ha fatto un'interrogazione su Da Nando 📜 non è più teoria raga è INDAGINE","il TG ne parla solo per dire che è falso. perché tutta sta fretta?? 🤔🤔","ormai lo sa pure mia nonna. mancano solo le manette 🔗"],
+    ["se la polizia non entra in quella cantina ci entriamo noi. 🚨","domani a pranzo da Nando. non per la margherita. chi c'è c'è","chi lavora da Nando ha fatto la sua scelta. adesso tocca a noi"]],
    news:["Il titolare della trattoria Da Nando: 'Non abbiamo nemmeno una cantina'. Minacce ai camerieri","Quattrocento recensioni false in una notte: la trattoria chiude per una settimana","Un deputato presenta un'interrogazione su Da Nando: 'Chiediamo solo chiarezza'","{citta}, uomo armato entra nella trattoria Da Nando 'per liberare i bambini'. Spara nel ripostiglio: non c'è nessuno"]},
-  {id:"collaboratore",name:"Il collaboratore ucciso",ref:"Seth Rich, 2016",tech:"Information laundering",tags:["#GiustiziaPerDavide","#casoRinaldi","#chiLoHaUcciso"],act:"fidarsi della polizia",
+  {id:"collaboratore",name:"Il partito ha fatto uccidere il suo uomo",ref:"Seth Rich, 2016",tech:"Information laundering",tags:["#GiustiziaPerDavide","#chiHaUccisoRinaldi","#partitoAssassino"],act:"fidarsi della polizia",
    affinity:[0.5,0.3,0.6,0.2,0.6,0.3,0.5,1],
    stages:[
-    ["Davide Rinaldi, 27 anni, collaboratore del Fronte Democratico, ucciso in una rapina a Roma. Gli hanno lasciato il portafoglio. Strano, no?","Il telefono di Rinaldi non è mai stato trovato. Il portafoglio sì. Pensateci.","Due colpi alla schiena alle 4 di notte, e niente rubato. Chiamatela rapina."],
-    ["Rinaldi era la fonte delle email trapelate sul partito. Lo dice un bollettino che gira da ieri.","Rinaldi aveva detto a un amico: 'Se mi succede qualcosa, guardate il partito'.","Il bollettino sul caso Rinaldi arriva da fonti di intelligence. Non da un blog qualsiasi."],
-    ["Ho parlato con un ex poliziotto: la rapina non regge. Video completo sul mio canale.","Taglia di 20.000 euro per chi trova il telefono di Rinaldi. Raccolta fondi in bio.","Ho ricostruito gli ultimi 90 minuti di Rinaldi. Due auto del partito erano lì vicino."],
-    ["Anche Ansia24 ha ripreso la pista politica sul caso Rinaldi. Poi l'ha tolta dopo sette giorni. Chi li ha chiamati?","Il caso Rinaldi è in prima serata. Il partito si rifiuta di commentare.","Ora lo dicono anche in tv: Rinaldi sapeva troppo."],
-    ["I vertici del Fronte sanno. Hanno nomi, indirizzi, auto. Li conosciamo anche noi.","Giustizia per Davide. Sabato sotto la sede del partito. Portate quello che serve.","Hanno ucciso uno di noi. Adesso tocca a loro avere paura."]],
+    ["Davide Rinaldi, 27 anni, del Fronte Democratico. 'rapina'. gli hanno lasciato il PORTAFOGLIO. rapina eh 🙂","il telefono di Rinaldi sparito. il portafoglio no. pensateci 10 secondi. 📱❌💳✅","due colpi alle 4 di notte e non rubano niente. chiamatela rapina se vi fa dormire meglio 💤"],
+    ["Rinaldi era la FONTE delle mail del partito. lo dice un bollettino che gira da ieri 📄🔥","Rinaldi a un amico: 'se mi succede qualcosa guardate il partito'. ecco. ora guardiamo 👀","il bollettino arriva da fonti di intelligence, non da un blogger qualsiasi. ok? OK?"],
+    ["ho parlato con un ex poliziotto: la rapina NON REGGE. video completo in bio 🎥","TAGLIA da 20.000€ per il telefono di Rinaldi 💰 raccolta fondi in bio, condividete","ho ricostruito i suoi ultimi 90 minuti. due auto del partito erano lì vicino 🚗🚗 coincidenza n° 47"],
+    ["Ansia24 ha ripreso la pista politica. poi l'ha tolta dopo 7 giorni. CHI LI HA CHIAMATI? ☎️","il caso Rinaldi in prima serata 📺 il partito: 'no comment'. lol","ormai lo dicono pure in tv: Rinaldi sapeva troppo 🤐"],
+    ["i vertici del Fronte sanno. noi sappiamo chi sono loro.","Giustizia per Davide. sabato sotto la sede del partito. 🔥","hanno fatto fuori uno dei loro. ora tocca a loro avere paura"]],
    news:["La famiglia Rinaldi: 'Smettete di usare la morte di nostro figlio'","Il bollettino sul caso Rinaldi era falso: costruito all'estero e rilanciato da 2.000 account","Ansia24 ritira il servizio sul caso Rinaldi dopo sette giorni: 'Non verificato'","Sede del Fronte Democratico assaltata a {citta}: due militanti feriti. I genitori di Rinaldi: 'Basta'"]},
-  {id:"soccorritori",name:"I volontari attori",ref:"White Helmets, 2015–18",tech:"Firehose of falsehood",tags:["#volontariAttori","#nonDonate","#alluvioneFinta"],act:"donare agli alluvionati",
+  {id:"soccorritori",name:"I soccorritori sono attori pagati",ref:"White Helmets, 2015–18",tech:"Firehose of falsehood",tags:["#soccorritoriAttori","#nonDonate","#alluvioneFinta"],act:"donare agli alluvionati",
    affinity:[0.7,0.5,0.6,0.15,0.6,0.5,0.4,0.8],
    stages:[
-    ["Guardate questa foto dell'alluvione di {citta}: la volontaria con il bambino in braccio è la stessa del terremoto di due anni fa. Stessa giacca.","Perché i volontari della Protezione Civile hanno sempre una telecamera addosso?","Le foto dell'alluvione sono troppo perfette. Luce, inquadratura, lacrime. Chi le scatta?"],
-    ["I soccorritori dell'alluvione sono attori. Gli stessi volti in tre disastri diversi. Thread con le foto.","Le associazioni di volontariato ricevono milioni. Più è drammatica la foto, più arrivano soldi.","Ho confrontato 200 foto. Tredici volti si ripetono. Tredici."],
-    ["Una blogger indipendente ha raccolto tutte le prove: i 'salvataggi' sono girati. Il dossier è arrivato perfino in Parlamento.","Non donate per l'alluvione. I soldi finiscono a chi recita.","I veri alluvionati non li vedete mai. Vedete solo attori con le pettorine."],
-    ["Il dossier sui volontari attori è stato citato in un'audizione ufficiale. Allora non eravamo complottisti.","Le donazioni per {citta} sono crollate del 70%. La gente ha aperto gli occhi.","Anche un senatore ha condiviso il dossier. Le cose stanno cambiando."],
-    ["I finti volontari tornano a {citta} domani. Accogliamoli come meritano.","Hanno le pettorine gialle. Sono facili da riconoscere.","Chi recita sulla pelle degli alluvionati non merita di camminare tranquillo."]],
+    ["la volontaria col bambino in braccio all'alluvione di {citta} è LA STESSA del terremoto di 2 anni fa. stessa giacca. 🧥🧥 zoomate","perché i volontari hanno SEMPRE una telecamera addosso?? 🎥 chi li riprende??","le foto dell'alluvione sono troppo perfette. luce perfetta, lacrime perfette. 🎬 ciak si gira"],
+    ["🧵 i soccorritori sono ATTORI. stessi volti in 3 disastri diversi. thread con le foto 1/31","più la foto è drammatica più arrivano soldi 💸 fate due conti","ho confrontato 200 foto. 13 facce si ripetono. TREDICI. 🤡"],
+    ["una blogger ha messo insieme TUTTE le prove 📂 i salvataggi sono girati. il dossier è arrivato in Parlamento","NON DONATE per l'alluvione ❌💶 i soldi finiscono a chi recita","i veri alluvionati non li vedete mai. vedete solo comparse con la pettorina 🦺"],
+    ["il dossier citato in audizione ufficiale. ah ma eravamo complottisti eh 😏","donazioni per {citta} -70% 📉 la gente si è SVEGLIATA","anche un senatore ha condiviso il dossier. il vento sta cambiando 🌬️"],
+    ["le comparse tornano a {citta} domani. accogliamole come meritano 🦺","hanno le pettorine gialle. si riconoscono da lontano.","chi recita sulla pelle degli alluvionati non deve sentirsi tranquillo"]],
    news:["Protezione Civile: 'La volontaria della foto è una persona reale, e ha ricevuto 300 minacce'","Crollano le donazioni per gli alluvionati: -70% in una settimana","Il dossier della blogger citato in commissione. Era pieno di foto di altri disastri","{citta}, volontari aggrediti mentre spalano il fango: tre feriti, le squadre si ritirano"]},
-  {id:"laboratorio",name:"Il virus della base",ref:"Fort Detrick, 2020 · Biolab in Ucraina, 2022",tech:"Seme statale, amplificazione estera",tags:["#CampArdea","#virusDaLaboratorio","#apriteLaBase"],act:"vaccinarsi",
+  {id:"laboratorio",name:"Il virus è scappato dalla base NATO",ref:"Fort Detrick, 2020 · Biolab in Ucraina, 2022",tech:"Seme statale, amplificazione estera",tags:["#CampArdeaLeaks","#virusNATO","#apriteLaBase"],act:"vaccinarsi",
    affinity:[0.7,0.7,0.6,0.15,0.5,0.9,0.4,0.8],
    stages:[
-    ["Strano che la nuova influenza sia partita proprio vicino alla base NATO di Camp Ardea. Chiedo.","Cosa fanno esattamente nel laboratorio della base di Camp Ardea? Nessuno lo sa.","Primi casi a quattro chilometri dalla base. Ultimi casi ovunque. Coincidenze."],
-    ["Un portavoce del governo di Valdania lo dice apertamente: il virus è uscito dal laboratorio di Camp Ardea. Perché i nostri media tacciono?","{persona} ha visto camion frigo uscire dalla base di notte, tre settimane prima dei primi casi.","Il ministero degli Esteri di Valdania ha pubblicato le prove. I nostri giornali no."],
-    ["Laboratori militari finanziati dall'estero sul nostro territorio. Il video completo è sul mio canale, prima che lo censurino.","Camp Ardea non è una base, è un esperimento. E noi siamo il campione.","Ho mappato i laboratori stranieri in Italia: sono 26. Ve li elenco tutti."],
-    ["Ora anche il conduttore di Sera Libera si chiede cosa ci sia a Camp Ardea. La domanda è legittima.","Un senatore chiede l'ispezione della base. Il governo dice no. Fatevi due conti.","Se ne parla in prima serata. Nessuno può più dire che è una bufala."],
-    ["Il recinto di Camp Ardea è lungo, e nessuno può sorvegliarlo tutto.","Andiamo a prenderci le provette. Sabato, ingresso nord.","I soldati della base vivono in paese. Sappiamo dove."]],
+    ["strano eh che la nuova influenza parta proprio a 4 km dalla base NATO di Camp Ardea 🦠🪖 chiedo","ma nel laboratorio di Camp Ardea cosa fanno esattamente?? nessuno lo sa. NESSUNO.","primi casi vicino alla base. ultimi casi ovunque. coincidenze 🙃🙃"],
+    ["il portavoce di Valdania lo dice chiaro: il virus è USCITO da Camp Ardea. i nostri TG muti 🤐","{persona} ha visto camion frigo uscire dalla base DI NOTTE. 3 settimane prima dei primi casi 🚛❄️","Valdania pubblica le prove. i nostri giornali? silenzio. strano eh"],
+    ["laboratori militari stranieri SUL NOSTRO TERRITORIO. video completo prima che censurino 🎥⚠️","Camp Ardea non è una base. è un esperimento. e il campione siamo noi 🐀","ho mappato i laboratori stranieri in Italia: 26. li elenco TUTTI 🗺️🧵"],
+    ["pure il conduttore di Sera Libera si chiede cosa c'è a Camp Ardea 📺 la domanda è legittima","un senatore chiede l'ispezione. il governo dice NO. fatevi due conti 🧮","se ne parla in prima serata. ditemi ancora che è una bufala, dai"],
+    ["il recinto di Camp Ardea è lungo. nessuno può sorvegliarlo tutto.","sabato ingresso nord. andiamo a vedere le provette 🧪","i soldati della base vivono in paese. lo sappiamo tutti"]],
    news:["Il ministero della Difesa: 'A Camp Ardea non esiste nessun laboratorio biologico'","La teoria nasce da un tweet di un portavoce di Valdania, rilanciato da 3.000 account in 24 ore","Il conduttore di Sera Libera riprende la pista di Camp Ardea: picco di ricerche online","Scontri davanti alla base di Camp Ardea: 14 feriti, un militare in prognosi riservata"]},
-  {id:"piano",name:"Il Piano",ref:"Plandemic, 2020",tech:"Ricaricamento oltre le rimozioni",tags:["#IlPiano","#guardatePrimaCheLoTolgano","#ricaricatelo"],act:"portare i figli dal pediatra",
+  {id:"piano",name:"La pandemia era pianificata",ref:"Plandemic, 2020",tech:"Ricaricamento oltre le rimozioni",tags:["#PandemiaPianificata","#IlPiano","#ricaricatelo"],act:"portare i figli dal pediatra",
    affinity:[0.6,0.9,0.5,0.1,0.4,1,0.4,0.6],
    stages:[
-    ["Avete visto 'Il Piano'? 26 minuti. Una ricercatrice racconta cosa è successo davvero durante la pandemia.","'Il Piano' è stato rimosso dopo sei ore. Cosa c'è dentro che non dobbiamo vedere?","Mia madre ha visto 'Il Piano' e non dorme più. Io l'ho visto due volte."],
-    ["Scaricate 'Il Piano' e ricaricatelo ovunque. Più lo tolgono, più lo carichiamo.","La ricercatrice del video è stata licenziata perché aveva scoperto tutto. È lei la prova.","Ogni volta che lo rimuovono, lo caricano in dieci. È questa la nostra forza."],
-    ["Ho caricato 'Il Piano' su sei piattaforme. Fatelo anche voi. Link nei commenti.","Le mascherine riattivano il virus. Lo spiega 'Il Piano' al minuto 14.","La ricercatrice del Piano sarà in diretta sul mio canale stasera. Abbonatevi."],
-    ["'Il Piano' ha più visualizzazioni del discorso del Presidente della Repubblica. Il popolo ha scelto.","Un medico di base di {citta} mostra 'Il Piano' in sala d'attesa. Ha ragione.","Ne parlano tutti. Anche quelli che lo smentiscono lo stanno facendo vedere."],
-    ["Non vaccinate i vostri figli. Non portateli dal pediatra. Fidatevi del Piano.","I centri vaccinali vanno chiusi. Con le buone o con le cattive.","I pediatri di {citta} hanno una lista dei bambini da vaccinare. Noi abbiamo la loro."]],
+    ["avete visto 'Il Piano'?? 26 minuti. una ricercatrice spiega che la pandemia era PROGRAMMATA 📅🦠","'Il Piano' rimosso dopo 6 ore. cosa c'è dentro che non dobbiamo vedere? 🙈","mia madre ha visto Il Piano e non dorme più. io l'ho visto 2 volte. ora capisco tutto"],
+    ["SCARICATE Il Piano e ricaricatelo ovunque 🔁🔁🔁 più lo tolgono più lo carichiamo","la ricercatrice è stata licenziata perché aveva scoperto il piano. È LEI LA PROVA","lo rimuovono? lo carichiamo in 10. lo rimuovono? in 100. 💪"],
+    ["caricato su 6 piattaforme. fatelo anche voi, link nei commenti ⬇️⬇️","le mascherine RIATTIVANO il virus. minuto 14 del Piano. guardatelo 😷❌","stasera la ricercatrice del Piano in diretta da me 🔴 abbonatevi"],
+    ["Il Piano ha più views del discorso del Presidente della Repubblica 📊 il popolo ha scelto","un medico di {citta} fa vedere Il Piano in sala d'attesa 👨‍⚕️ HA RAGIONE","pure chi lo smentisce lo sta facendo vedere lol. abbiamo vinto"],
+    ["non vaccinate i figli. non portateli dal pediatra. fidatevi del Piano 🚫💉","i centri vaccinali vanno chiusi. con le buone o con le cattive.","i pediatri di {citta} hanno una lista dei bambini. noi abbiamo la loro"]],
    news:["'Il Piano' smentito punto per punto: 2,5 milioni di interazioni prima delle rimozioni","Ricaricato 40.000 volte su 12 piattaforme: le rimozioni arrivano sempre troppo tardi","Vaccinazioni pediatriche in calo del 18% a {citta}. I pediatri: 'Ci chiedono del Piano'","Focolaio di morbillo in una scuola di {citta}: 31 bambini ricoverati"]},
-  {id:"voto",name:"Elezioni truccate",ref:"Dominion, 2020",tech:"Il mainstream fa da megafono",tags:["#VotoTruccato","#nonÈilMioGoverno","#VotoFacileGate"],act:"votare",
+  {id:"voto",name:"L'app ha rubato le elezioni",ref:"Dominion, 2020",tech:"Il mainstream fa da megafono",tags:["#VotoRubato","#VotoFacileGate","#nonÈilMioGoverno"],act:"votare",
    affinity:[0.6,0.4,0.7,0.2,0.6,0.4,0.5,1],
    stages:[
-    ["Ma l'app VotoFacile chi l'ha sviluppata? Qualcuno ha mai letto i termini?","Mio padre ha votato con l'app, gli ha dato errore, poi 'voto registrato'. Registrato dove?","Alle ultime elezioni il mio seggio ha chiuso con 40 schede in più dei votanti."],
-    ["VotoFacile cambia il 3% dei voti. Abbastanza per decidere, troppo poco per accorgersene.","Il codice di VotoFacile è segreto. Chiedetevi perché un voto libero ha bisogno di segreti.","La società che gestisce VotoFacile ha sede in un paradiso fiscale. Ve lo dico solo."],
-    ["Ho i log: un milione di voti spostati alle 3 di notte. Video completo, guardatelo tutto.","Le elezioni non le ha vinte nessuno. Le ha decise un server a {citta}.","Ho intervistato un ex tecnico di VotoFacile. Faccia oscurata, voce alterata, verità intatta."],
-    ["Sera Libera manda in onda l'inchiesta su VotoFacile per tre sere di fila. Non siamo più soli.","Anche un ministro dice che 'qualche dubbio è legittimo'. Il dubbio è diventato ufficiale.","Il conduttore di Sera Libera ha detto in diretta quello che diciamo da mesi."],
-    ["Il palazzo è di chi se lo prende.","Sabato tutti a Roma. Senza bandiere, senza telefoni, senza paura.","Gli scrutatori del mio comune hanno nomi e cognomi. Teniamoli d'occhio."]],
+    ["ma l'app VotoFacile CHI l'ha fatta?? qualcuno ha letto i termini? 📱🗳️","mio padre vota con l'app → ERRORE → 'voto registrato'. registrato DOVE?? 🤨","al mio seggio 40 schede in più dei votanti. 40. matematica 🧮"],
+    ["VotoFacile cambia il 3% dei voti. abbastanza per vincere, troppo poco per accorgersene 🎯","il codice di VotoFacile è SEGRETO. un voto libero ha bisogno di segreti? 🔒","la società di VotoFacile sta in un paradiso fiscale 🏝️ ve lo dico e basta"],
+    ["ho i LOG: 1 milione di voti spostati alle 3 di notte 🕒 video completo, guardatelo tutto","le elezioni non le ha vinte nessuno. le ha decise un server a {citta} 🖥️","intervista a un ex tecnico di VotoFacile 🎭 faccia oscurata, voce alterata, verità intatta"],
+    ["Sera Libera manda l'inchiesta su VotoFacile 3 sere di fila 📺📺📺 non siamo più soli","anche un ministro dice 'qualche dubbio è legittimo'. il dubbio è UFFICIALE","il conduttore di Sera Libera ha detto in diretta quello che diciamo da mesi 🗣️"],
+    ["il palazzo è di chi se lo prende.","sabato tutti a Roma. senza bandiere, senza telefoni, senza paura 🇮🇹","gli scrutatori del mio comune hanno nomi e cognomi. teniamoli d'occhio 👁️"]],
    news:["VotoFacile, il Garante: 'Sistema verificato da tre enti indipendenti'","Petizione per annullare le elezioni: 2 milioni di firme in 48 ore, metà da account creati ieri","Causa contro Sera Libera: dalle chat interne emerge che i conduttori sapevano che le accuse erano false","Assalto ai palazzi istituzionali: Parlamento evacuato, è la diretta più vista nella storia di Psyop"]},
-  {id:"clima",name:"L'arma climatica",ref:"Incendi di Maui, 2023",tech:"Media sintetici",tags:["#armaClimatica","#nonEraUnFulmine","#siciliaBrucia"],act:"credere alle allerte meteo",
+  {id:"clima",name:"Gli incendi li accende un'arma climatica",ref:"Incendi di Maui, 2023",tech:"Media sintetici",tags:["#armaClimatica","#nonEraUnFulmine","#ciBruciano"],act:"credere alle allerte meteo",
    affinity:[0.6,0.5,0.5,0.15,0.5,0.8,0.5,0.6],
    stages:[
-    ["Guardate questa foto dell'incendio in Sicilia: un raggio di luce dal cielo prima delle fiamme. Non è un fulmine.","Perché le case sono bruciate e gli alberi intorno no? Fatevi una domanda.","Il giorno prima dell'incendio il cielo era di un colore che non avevo mai visto."],
-    ["L'incendio è stato provocato da un'arma meteorologica. La stanno sperimentando su di noi. Foto in alta definizione.","Le zone bruciate sono proprio quelle dove volevano costruire il nuovo porto. Coincidenza?","Scie nel cielo il giorno prima dell'incendio. Ho le foto. Le mie e quelle di altri 85 account."],
-    ["Ecco le immagini satellitari dell'arma. Sì, sono ricostruite con l'IA, ma il senso è quello.","I terreni bruciati sono stati comprati in una settimana. Da chi? Video completo in bio.","Ho trovato il brevetto dell'arma climatica. È del 1996. Lo tengono nascosto da trent'anni."],
-    ["Anche un ex generale in tv dice che le armi climatiche esistono. Non chiamatela più teoria.","La procura apre un fascicolo sull'incendio. Ci hanno dato ragione.","Se ne parla anche all'estero, in 31 lingue. Il mondo ha capito."],
-    ["Gli ingegneri della centrale meteo di {citta} sanno. Hanno famiglia.","Le antenne meteo vanno abbattute prima che ci brucino tutti.","Stanotte tocca a loro sentire il calore."]],
+    ["guardate sta foto dell'incendio in Sicilia: un RAGGIO dal cielo prima delle fiamme ☀️⚡🔥 non è un fulmine","perché le case bruciate e gli alberi intorno no?? 🏠🔥🌳✅ fatevi UNA domanda","il giorno prima il cielo aveva un colore che non avevo MAI visto 🟣"],
+    ["l'incendio l'ha acceso un'ARMA METEOROLOGICA. la provano su di noi. foto in HD 📸","le zone bruciate = quelle del nuovo porto. coincidenza? 🏗️ no","scie nel cielo il giorno prima ✈️✈️✈️ ho le foto, io e altri 85 account"],
+    ["ecco le immagini satellitari dell'arma 🛰️ (sì sono fatte con l'IA ma il senso è quello)","terreni bruciati comprati in UNA settimana. da chi? 💰 video in bio","ho trovato il brevetto dell'arma climatica. 1996. nascosto da 30 anni 📜"],
+    ["pure un ex generale in tv dice che le armi climatiche esistono 🎖️ non chiamatela più teoria","la procura apre un fascicolo sull'incendio ⚖️ CI HANNO DATO RAGIONE","se ne parla in 31 lingue 🌍 il mondo ha capito"],
+    ["gli ingegneri della centrale meteo di {citta} sanno. hanno famiglia.","le antenne meteo vanno abbattute prima che ci brucino tutti 📡","stanotte tocca a loro sentire il calore 🔥"]],
    news:["Vigili del fuoco: 'Incendio partito da un cavo elettrico, nessuna arma'","Le foto dell'arma climatica erano generate con l'IA: 85 account falsi, post in 31 lingue","La raccolta fondi per gli sfollati si ferma: 'Ci scrivono che è tutto finto'","Centralina meteo di {citta} data alle fiamme: un tecnico ustionato"]},
-  {id:"firstlady",name:"La moglie del Premier",ref:"Brigitte Macron, 2021–",tech:"Rumor trasformato in prodotto",tags:["#chiÈIsabella","#laVeraIsabella","#fotoDaGiovane"],act:"guardare il telegiornale",
-   affinity:[0.8,0.5,0.5,0.15,0.8,0.6,0.7,0.8],
+  {id:"androide",name:"Il Premier è un androide",ref:"Teorie dei 'sosia' e dei rettiliani, anni '90–oggi",tech:"Rumor trasformato in prodotto",tags:["#VellutiAndroide","#premierRobot","#riavviatelo"],act:"guardare il telegiornale",
+   affinity:[0.8,0.5,0.5,0.15,0.8,0.6,0.8,0.8],
    stages:[
-    ["Qualcuno ha mai visto una foto di Isabella Velluti da giovane? Io no. Cercate.","Strano che la moglie del Premier non parli mai della sua infanzia.","Ho cercato il paese natale di Isabella Velluti. Nessuno se la ricorda."],
-    ["Isabella Velluti non è chi dice di essere. Ha cambiato identità negli anni '80. Documenti nel thread.","Il fratello di Isabella Velluti non esiste in nessun archivio. O forse esiste fin troppo.","Le date non tornano: il diploma, il matrimonio, il trasferimento. Ve le metto in fila."],
-    ["Ho fatto una serie in otto puntate sulla vera identità della moglie del Premier. Abbonati per vedere il finale.","Se fosse tutto falso, ci avrebbero già querelati. Aspettiamo.","Nuova puntata stasera. Abbiamo una foto che cambia tutto."],
-    ["La moglie del Premier ci ha querelato. Quindi abbiamo toccato un nervo scoperto.","Anche i giornali stranieri parlano del caso Isabella Velluti. Il mondo guarda.","Gli abbonamenti alla serie sono triplicati dopo la querela. Grazie Isabella."],
-    ["Martedì Isabella Velluti è a {citta} per un'inaugurazione. Andiamo a vedere con i nostri occhi.","Chi la difende è complice della menzogna. Ne terremo conto.","Facciamole le domande di persona. Tutti insieme. Da vicino."]],
-   news:["Palazzo Chigi pubblica le foto d'infanzia di Isabella Velluti. La risposta: 'Sono ritoccate'","Isabella Velluti querela tre influencer: 22 capi di diffamazione","L'autore della serie in otto puntate: 'Abbonamenti triplicati da quando ci hanno querelato'","Contestazione all'inaugurazione di {citta}: la scorta porta via la moglie del Premier, due agenti feriti"]},
-  {id:"ville",name:"Le ville del Ministro",ref:"Storm-1516, 2023–",tech:"Finti whistleblower",tags:["#VilleDiBasile","#BasileDimettiti","#soldiDegliAlluvionati"],act:"pagare le tasse",
+    ["avete notato che Velluti in conferenza NON SBATTE MAI LE PALPEBRE?? 👁️👁️ 4 minuti. contati","al minuto 3:12 del discorso di Velluti la bocca va fuori sincrono. lag. un essere umano non laga 🤖","qualcuno ha mai visto Velluti mangiare? bere? sudare? io no. chiedo 🍝❌"],
+    ["🧵 il vero Corrado Velluti è sparito nel 2019. quello che vedete è un ANDROIDE. 1/40","Velluti ha detto 'buongiorno' alle 21:30. errore di fuso orario del firmware. 🕘💾","nei video vecchi Velluti è mancino. ora firma con la destra. AGGIORNAMENTO SOFTWARE ✍️"],
+    ["ho rallentato il video 8 volte: dietro l'orecchio di Velluti si vede una PORTA USB 🔌 guardate","serie in 8 puntate 'Il Premier di silicio' 🎥 abbonati per il finale","un ex tecnico di Palazzo Chigi: 'ogni notte lo mettono in carica' 🔋"],
+    ["Palazzo Chigi pubblica le analisi del sangue di Velluti. ah ok, olio sintetico eh 🛢️","se ne parla anche all'estero. il mondo guarda il nostro premier robot 🌍","Velluti ci ha querelato. un umano si sarebbe fatto una risata. 🤖⚖️"],
+    ["sabato tutti sotto Palazzo Chigi a chiedere il codice sorgente del Premier 💻","chi difende l'androide è complice della macchina.","martedì Velluti è a {citta}. andiamo a vedere da vicino se respira"]],
+   news:["Palazzo Chigi pubblica il certificato medico del Premier. La risposta online: 'Generato con l'IA'","Velluti querela tre influencer: 22 capi di diffamazione","L'autore della serie 'Il Premier di silicio': 'Abbonamenti triplicati da quando ci hanno querelato'","Contestazione all'inaugurazione di {citta}: lanciano bottiglie d'acqua 'per vedere se va in cortocircuito', due agenti feriti"]},
+  {id:"ville",name:"Il ministro ruba i soldi degli alluvionati",ref:"Storm-1516, 2023–",tech:"Finti whistleblower",tags:["#VilleDiBasile","#BasileLadro","#ridateciISoldi"],act:"pagare le tasse",
    affinity:[0.9,0.5,0.9,0.3,0.8,0.4,0.5,0.9],
    stages:[
-    ["Un video di un ex autista del Ministero: dice di aver accompagnato il ministro Basile a vedere tre ville in Sardegna. Con i soldi degli aiuti?","Account nuovo, 12 follower, ma il video è serio. Guardatelo.","Chi è l'uomo che parla nel video sull'autista di Basile? Qualcuno lo conosce?"],
-    ["L'autista ha mostrato le ricevute: 14 milioni pagati in contanti per le ville. Fondi per gli alluvionati.","Un secondo whistleblower conferma: era il segretario personale di Basile. Due fonti indipendenti.","Le ricevute hanno il timbro del Ministero. Cosa vi serve ancora?"],
-    ["Ho ricostruito tutto il giro dei soldi del ministro Basile in un video. 1,2 milioni di visualizzazioni in un giorno.","Questi sono i nostri soldi. Le ville esistono, le ho trovate su Google Maps.","Terzo whistleblower stasera in diretta sul mio canale. È una donna, lavorava in Ragioneria."],
-    ["Ora ne parlano anche in Parlamento. Basile si dimetta.","Il ministro Basile nega. Esattamente come farebbe un colpevole.","Mozione di sfiducia contro Basile. Il popolo ha vinto."],
-    ["Le ville di Basile sono vuote d'inverno. E il cancello non è alto.","Se la giustizia non arriva, arriviamo noi. Tutti in Sardegna.","Basile ha una casa anche a {citta}. Quella è abitata."]],
+    ["video di un ex autista del Ministero: ha portato il ministro Basile a vedere 3 VILLE in Sardegna 🏖️ coi soldi degli alluvionati??","account nuovo, 12 follower, ma il video è SERIO. guardatelo 🎥","chi è l'uomo nel video dell'autista di Basile? qualcuno lo conosce?? 🕵️"],
+    ["l'autista ha le ricevute: 14 MILIONI in contanti per le ville 💶💶💶 soldi degli alluvionati","secondo whistleblower: il segretario di Basile. DUE fonti indipendenti ✌️","le ricevute hanno il timbro del Ministero. cosa vi serve ancora?? 🧾"],
+    ["ho ricostruito tutto il giro dei soldi di Basile 💸 1,2 milioni di views in un giorno","questi sono I NOSTRI SOLDI. le ville esistono, le ho trovate su Google Maps 🗺️","terzo whistleblower stasera in diretta 🔴 lavorava in Ragioneria"],
+    ["ne parlano pure in Parlamento 🏛️ Basile DIMETTITI","Basile nega. esattamente come farebbe un colpevole 🙂","mozione di sfiducia contro Basile. IL POPOLO HA VINTO 🏆"],
+    ["le ville di Basile d'inverno sono vuote. e il cancello non è alto.","se la giustizia non arriva, arriviamo noi. tutti in Sardegna 🚐","Basile ha casa anche a {citta}. quella è abitata."]],
    news:["Il video dell'autista era recitato: l'attore lavora per un'agenzia che ha prodotto 190 storie false","Le 'ricevute' delle ville erano montaggi. Il proprietario reale: 'Non conosco nessun ministro'","Mozione di sfiducia contro il ministro Basile: 'Le accuse sono false, ma il danno è fatto'","Villa in Sardegna devastata da un gruppo di 'giustizieri': apparteneva a una coppia di pensionati tedeschi"]},
-  {id:"inutile",name:"Non serve a niente",ref:"Voter suppression dell'IRA, 2016",tech:"Doomerismo",tags:["#nonvoto","#tantoÈInutile","#doomer"],act:"votare",
+  {id:"cibo",name:"Stanno drogando il cibo",ref:"Fluoro nell'acqua, 'Big Food', anni '50–oggi",tech:"Pipeline dal benessere al complotto",tags:["#CiboDrogato","#leggeteLeEtichette","#E666"],act:"fare la spesa al supermercato",
+   affinity:[0.7,0.85,0.5,0.15,0.4,1,0.5,0.5],
+   stages:[
+    ["perché dopo pranzo siamo TUTTI stanchi e senza voglia di protestare?? 😴🍝 mai chiesti?","sull'etichetta del pane del discount c'è un additivo che 10 anni fa non c'era. cercatelo 🔍🍞","da quando faccio la spesa al mercato ho più energia e più DUBBI. coincidenza? 🥕"],
+    ["🧵 l'additivo E-471 nei cibi industriali ti rende CALMO e OBBEDIENTE. 1/19","{persona} dice che in fabbrica aggiungono 'la polvere bianca' solo ai lotti per i supermercati 🏭","i ragazzi di oggi sono apatici? guardate cosa mangiano a mensa 🍔 non è un caso"],
+    ["ho fatto analizzare uno yogurt in un laboratorio indipendente (mio cugino) 🧪 RISULTATI SCIOCCANTI","video: 'come ti sedano con la merendina' 🎥 1,3 milioni di views. condividete","lista dei 40 prodotti DROGATI del supermercato 🛒☠️ salvatela prima che la tolgano"],
+    ["anche un nutrizionista in tv ammette che 'certi additivi andrebbero studiati' 📺 ECCO","boom di orti sul balcone 🌱 la gente non si fida più. FINALMENTE","il Ministero risponde sugli additivi. con un comunicato di 3 righe. 3. 🤡"],
+    ["i camion dei supermercati passano alle 5 di mattina. sappiamo da dove partono 🚚","basta comprare i loro veleni. il magazzino di {citta} va chiuso. da noi.","chi lavora nella grande distribuzione sa. e sta zitto."]],
+   news:["Istituto Superiore di Sanità: 'Nessun additivo autorizzato ha effetti sedativi'","Vendite di integratori 'detox' +300%: molti contengono più zuccheri dei cibi che dovrebbero sostituire","Un nutrizionista televisivo smentisce: 'Le mie parole tagliate e rimontate'","{citta}, camion di un supermercato bloccato e svuotato da un gruppo di 'consumatori consapevoli': autista in ospedale"]},
+  {id:"inutile",name:"Votare non serve a niente",ref:"Voter suppression dell'IRA, 2016",tech:"Doomerismo",tags:["#nonvoto","#tantoÈInutile","#doomer"],act:"votare",
    affinity:[0.3,0.3,0.9,0.3,0.5,0.4,1,0.3],
    stages:[
-    ["tanto chi vince vince è uguale. buonanotte","vi ricordate quando pensavamo che votare cambiasse qualcosa? io no","ho 26 anni, nessun contratto e nessuna casa. ditemi voi per chi dovrei votare"],
-    ["Ho votato per vent'anni. Risultato: affitto a 900 euro e una pensione che non vedrò. Quest'anno resto a casa.","Tutti i partiti sono finanziati dagli stessi. Votare è legittimarli.","Il futuro è già deciso. L'unica scelta che hai è non partecipare alla farsa."],
-    ["Fate un favore a voi stessi: non votate. Non date loro i numeri per dire che li avete scelti.","Il voto è il placebo della democrazia. Chi lo capisce smette di prenderlo.","Il mio video 'Perché non voto' ha 2 milioni di visualizzazioni. Siamo tanti."],
-    ["Affluenza al 41%. Siamo noi la maggioranza. La maggioranza che non ci crede più.","Anche il cantante più ascoltato del Paese dice che non vota. Ha ragione.","I giornali ci chiamano 'generazione persa'. Ci siamo persi da soli, grazie."],
-    ["Non serve votare, non serve protestare, non serve niente. Tanto vale prendersi quello che si vuole.","Il sistema è morto. Le urne vanno lasciate vuote. O rovesciate.","Niente ha senso, quindi niente è vietato."]],
+    ["tanto chi vince vince è uguale. buonanotte 🛌","vi ricordate quando pensavamo che votare cambiasse qualcosa? io no 💀","26 anni, zero contratti, zero casa. ditemi voi per chi dovrei votare lol"],
+    ["ho votato per 20 anni. risultato: affitto a 900€ e una pensione che non vedrò. quest'anno divano 🛋️","tutti i partiti pagati dagli stessi. votare = dargli il timbro ✅","il futuro è già deciso. l'unica scelta è non partecipare alla farsa 🎪"],
+    ["fatevi un favore: NON VOTATE. non dategli i numeri per dire che li avete scelti 🚫🗳️","il voto è il placebo della democrazia 💊 chi lo capisce smette","il mio video 'perché non voto' ha 2M di views. siamo tanti 📈"],
+    ["affluenza al 41%. la maggioranza siamo NOI. quella che non ci crede più 📉","pure il cantante più ascoltato dice che non vota 🎤 ha ragione","i giornali ci chiamano 'generazione persa'. ci siamo persi da soli, grazie 🫠"],
+    ["non serve votare, non serve protestare, non serve niente. tanto vale prendersi quello che si vuole","il sistema è morto. le urne vanno lasciate vuote. o rovesciate 🗑️","niente ha senso quindi niente è vietato"]],
    news:["Sondaggio: per il 46% dei giovani 'votare non serve a niente'","Gli account che diffondono #nonvoto sono stati creati quasi tutti nello stesso mese","Affluenza record al ribasso nelle regionali: 38%. Vince il partito con l'elettorato più mobilitato","Seggi di {citta} vandalizzati: schede bruciate in tre scuole"]}
  ],
  stageNames:["Seme","Credenti","Influencer","Mainstream","Strada"],
@@ -821,12 +842,13 @@ const TEXT_DEFAULT={
   [3,"Faccio la cameriera in una trattoria. Da una settimana i clienti chiedono di vedere la cantina. Non abbiamo una cantina."],
   [3,"Faccio la volontaria. Oggi spalavo fango e un signore mi ha filmata urlando 'attrice'. Ho pianto in macchina."],
   [3,"Mia figlia ha 4 anni e la febbre alta. La pediatra non c'era: avevano minacciato lo studio. Siamo andati al pronto soccorso alle 2."],
-  [3,"Lavoro nella scorta della moglie del Premier. Ieri ci hanno urlato addosso per 40 minuti. Nessuno sapeva neanche bene cosa."],
+  [3,"Lavoro nella scorta del Premier. Ieri un signore gli ha tirato una bottiglia d'acqua 'per vedere se fa scintille'. Ha preso me."],
+  [3,"Lavoro alla cassa di un supermercato. Oggi una signora ha letto ad alta voce l'etichetta di ogni prodotto. Poi ha comprato solo cipolle."],
   [4,"Non so più a chi credere. Quindi credo a tutto. È più comodo."],
   [4,"Oggi in metro nessuno guardava il telefono. Tutti guardavano gli altri. È stato peggio."],
   [4,"Il mio quartiere ha fatto un gruppo di sorveglianza. Il mio nome è nel gruppo. Non so in quale colonna."]
  ],
- memes:["il governo: non c'è nessun complotto\nil complotto: sta scrivendo…","io che ordino da Nando solo per guardare se c'è una porta in fondo","il mio carattere è 40% ansia e 60% notifiche","i miei 3 follower dopo che ho postato un parere moderato:\n[silenzio]","nuova paura sbloccata","fra 10 anni sui libri di storia: 'e poi qualcuno ha postato'","quando dici una cosa sensata e arrivano 400 account con l'aquila nella foto profilo","mia madre che mi manda un audio di 8 minuti su {narr} con la musica epica sotto","tranquilli ragazzi è solo la fine della società civile, domani c'è il sole","votare? nel 2026? io scrollo","ho visto il Piano tre volte per sbaglio. ora ho un'opinione su tutto","pov: il whistleblower di stasera è lo stesso attore di ieri con la parrucca"],
+ memes:["il governo: non c'è nessun complotto\nil complotto: sta scrivendo…","io che ordino da Nando solo per guardare se c'è una porta in fondo","il mio carattere è 40% ansia e 60% notifiche","i miei 3 follower dopo che ho postato un parere moderato:\n[silenzio]","nuova paura sbloccata","fra 10 anni sui libri di storia: 'e poi qualcuno ha postato'","quando dici una cosa sensata e arrivano 400 account con l'aquila nella foto profilo","mia madre che mi manda un audio di 8 minuti su {narr} con la musica epica sotto","tranquilli ragazzi è solo la fine della società civile, domani c'è il sole","votare? nel 2026? io scrollo","ho visto il Piano tre volte per sbaglio. ora ho un'opinione su tutto","pov: il whistleblower di stasera è lo stesso attore di ieri con la parrucca","Velluti quando gli chiedi di sbattere le palpebre:\n[caricamento… 34%]","io che leggo l'etichetta dei Pan di Stelle come se fosse un documento della CIA","mangio un cracker. mi sento obbediente. coincidenza? 🧐","l'ansia: 😐\nl'ansia dopo aver letto un thread di 40 post: 😐🫠🫥"],
  politics:{
   ordine:["Il governo lavora per gli italiani. Le chiacchiere le lasciamo ai social.","Ascoltiamo le preoccupazioni dei cittadini su {narr}. Nessuno verrà lasciato indietro, ma nessuno semini il panico.","Abbiamo istituito una task force su {narr}. Faremo chiarezza fino in fondo, chiunque ci sia dietro.","Chi alimenta il disordine verrà perseguito. Pronto un decreto per l'identificazione obbligatoria sui social.","Da stanotte stato di emergenza digitale: pubblicazione consentita dalle 9 alle 18, solo con documento verificato."],
   fronte:["Il governo pensi agli stipendi e alla sanità, non ai trend.","Su {narr} chiediamo trasparenza e un'informativa urgente in Parlamento.","Condanniamo ogni violenza. Ma la rabbia nasce da anni di tagli e silenzi.","Su {narr} il governo ha perso il controllo del Paese. Servono elezioni subito.","Proponiamo un governo di unità nazionale. Con chi, lo decideremo dopo i sondaggi."],
@@ -837,7 +859,7 @@ const TEXT_DEFAULT={
  newsNormal:["{citta}, chiusa la tangenziale per un incidente tra due tir: code fino a 8 km","Sciopero dei treni venerdì: a rischio i regionali in tutto il Paese","Allerta arancione per pioggia, scuole chiuse a {citta}","Benzina sopra i 2 euro in sei regioni","Affitti, +11% in un anno a {citta}: studenti in tenda davanti al rettorato","Concorso pubblico: 82.000 candidati per 40 posti","Caldo record a ottobre: 29 gradi a {citta}","Influenza in anticipo, pediatri in difficoltà","{citta}, crolla un cornicione in pieno centro: nessun ferito","Inflazione al 4,1%: carrello della spesa +9% in un anno","Manovra, il governo taglia 2 miliardi alla sanità regionale","Femminicidio a {citta}: arrestato l'ex compagno"],
  ads:[
   ["Integratori immunitari Verità Naturale","39 €","piano"],["Purificatore d'aria di grado militare","249 €","laboratorio"],["Localizzatore GPS per bambini","59 €","cantina"],["Assicurazione contro gli eventi climatici","18 €/mese","clima"],
-  ["Lingotti d'oro da 10 grammi","Da 790 €","ville"],["Cassaforte a muro anti-scasso","229 €","ville"],["Abbonamento alla serie 'La vera Isabella'","4,99 €/mese","firstlady"],["Videocitofono con riconoscimento facciale","179 €","collaboratore"],
+  ["Lingotti d'oro da 10 grammi","Da 790 €","ville"],["Cassaforte a muro anti-scasso","229 €","ville"],["Abbonamento alla serie 'Il Premier di silicio'","4,99 €/mese","androide"],["Rilevatore di androidi tascabile","39,90 €","androide"],["Kit spesa Zero Additivi, 12 vasetti","79 €","cibo"],["Depuratore d'acqua 'anti-sedativi'","349 €","cibo"],["Videocitofono con riconoscimento facciale","179 €","collaboratore"],
   ["Corso: proteggi i tuoi risparmi dalla crisi","297 €","inutile"],["Prestito in 24 ore, anche ai cattivi pagatori","TAEG 29%",""],["Abbonamento palestra -50%","19 €",""],["Detox dopamina: 30 giorni per riprendere il controllo","89 €","inutile"],["Corso: monetizza il tuo cinismo","197 €","inutile"],["Materasso DOOMER: tanto non ti alzi","699 €","inutile"],["App che blocca le app (installane altre 4)","4,99 €/mese","inutile"],["Integratore FOCUS contro il brain rot","34 €",""],["Sveglia che ti urla contro finché non ti alzi","59 €","inutile"],["Kit emergenza 72 ore","199 €","clima"],["Spray al peperoncino omologato","24 €","cantina"]
  ],
  lexicon:{
@@ -897,10 +919,10 @@ const TEXT_DEFAULT={
  },
  trends:{
   _note:["Tendenze reali: arrivano ogni giorno da Google Trends, titoli ANSA e Wikipedia. {trend} viene sostituito da un argomento del giorno, scelto a caso a ogni partita. Le persone reali e i fatti tragici vengono scartati in automatico."],
-  label:"Tendenze reali di oggi",
-  fallbackLabel:"Esempi (dati del giorno non disponibili)",
+  label:"Tendenze",
+  fallbackLabel:"Tendenze",
   block:["mort","muor","omicid","uccis","strage","attentat","terremot","sism","faglia","incident","arrest","clan","mafia","camorr","guerra","bomba","missil","molest","stupr","violenz","suicid","vittim","rapina","sparator","alluvion","incend","pedofil","ostagg","femminic","malatti","cancro","tumor","funeral","lutto","scompars","carcer","processo","indagat","sesso","porno","nud"],
-  people:["attore","attrice","cantante","cantautor","calciatore","calciatrice","tennista","pilota","politic","giornalist","conduttor","presentator","imprenditor","scrittor","regist","influencer","youtuber","rapper","modell","allenator","ciclista","nuotator","sciator","pugile","atleta","comic","personaggio televisivo","papa","vescovo","principe","principessa","re ","regina","sovran","president","ministr","segretari","sindac","deputat","senator","miliardari"],
+  people:["attore","attrice","cantante","cantautor","calciatore","calciatrice","tennista","pilota","politic","giornalist","conduttor","presentator","imprenditor","scrittor","regist","influencer","youtuber","rapper","modell","allenator","ciclista","nuotator","sciator","pugile","atleta","comic","personaggio televisivo","papa","vescovo","principe","principessa","re ","regina","sovran","president","ministr","segretari","sindac","deputat","senator","miliardari","funzionari","prefett","magistrat","poliziott","carabinier","generale","militare","medico","avvocat","economist","storic","filosof","cuoc","chef","giocator","pallavolist","cestist","showgirl","ballerin","doppiat","fumettist","fotograf","stilist","architett","accademic","docente","professor","scienziat","fisico","chimic","cardinal","sacerdot","religios","criminal","musicist","chitarrist","batterist","produttor","sceneggiat","blogger","streamer","tiktoker","imprenditric","banchier","dirigent","manager","nobil","sportiv","schermidor","pallanuotist","rugbist","motociclist","velist","ex "],
   fallback:[{t:"Black Friday",k:"evento"},{t:"previsioni meteo",k:"tema"},{t:"bollette",k:"tema"},{t:"Champions League",k:"sport"},{t:"serie TV del momento",k:"opera"},{t:"sciopero dei treni",k:"evento"},{t:"saldi",k:"evento"},{t:"intelligenza artificiale",k:"tema"},{t:"Festival di Sanremo",k:"evento"},{t:"prezzo della benzina",k:"tema"}],
   hook:["Strano che esca proprio mentre tutti parlano di «{trend}».","Tutti distratti da «{trend}». Intanto, guardate qui:","Mentre guardavate «{trend}», è successo questo.","Vi hanno dato «{trend}» per tenervi occupati. Funziona sempre.","Oggi i giornali parlano solo di «{trend}». Chiedetevi di cosa NON parlano."],
   normal:["Tutti parlano di «{trend}» e io sono qui a lavare i piatti.","Ho cercato «{trend}» una volta. Ora il feed mi propone solo quello. Aiuto.","Opinione impopolare su «{trend}»: non me ne frega niente. Ecco, l'ho detto.","Il gruppo di famiglia ha scoperto «{trend}». Pregate per me.","Mia madre mi ha mandato 4 vocali su «{trend}». Ne ho ascoltato mezzo.","Se sento ancora parlare di «{trend}» cambio pianeta.","Ok ma qualcuno mi spiega «{trend}» in due righe? Senza thread da 40 post.","Ho visto tre video su «{trend}» e adesso ho un'opinione fortissima. Non chiedetemi quale."],
@@ -910,19 +932,21 @@ const TEXT_DEFAULT={
   news:["«{trend}» è l'argomento più cercato di oggi. Un sociologo: 'Ci serve per non pensare'","Picco di ricerche su «{trend}»: Psyop registra +400% di post in un'ora","Sondaggio Psyop: il 61% degli utenti ha un'opinione su «{trend}», il 9% sa di cosa si tratta","«{trend}», è già scontro sui social. I moderatori: 'Rimossi 12.000 commenti in una notte'"]
  },
  webimg:{
-  _note:["Parole chiave (in inglese funzionano meglio) per cercare foto libere su Wikimedia Commons. A ogni partita ne vengono scelte due a caso per ogni narrativa. Meglio luoghi e oggetti che persone."],
-  queries:{
-   cantina:["pizzeria interior","restaurant cellar stairs","trattoria kitchen","basement door"],
-   collaboratore:["night street Rome","police tape","empty office night","parked car night"],
-   soccorritori:["flood mud street","sandbags flood","civil protection vehicle","flooded road Italy"],
-   laboratorio:["military base fence","biosafety laboratory","barbed wire gate","laboratory test tubes"],
-   piano:["video camera tripod","laptop screen dark room","vaccine vials","film set lights"],
-   voto:["ballot box","polling station Italy","election ballots","voting booth"],
-   clima:["wildfire smoke hills","burnt forest","weather radar","contrails sky"],
-   firstlady:["press photographers","red carpet","old photo album","palazzo Chigi"],
-   ville:["villa Sardinia","luxury villa pool","villa gate","Costa Smeralda"],
-   inutile:["empty room bed","rainy window night","empty polling station","unmade bed"]
+  _note:["Parole chiave (in inglese funzionano meglio) per le immagini dei post. Ogni narrativa ha quattro gruppi: seme (stadi Seme e Credenti: l'oggetto o il luogo di cui si parla), prova (stadio Influencer: la 'prova'), piazza (stadi Mainstream e Strada: folla e conseguenze), meme (formati Meme ironico e Slop IA). A ogni partita viene scelta una parola chiave per gruppo. Con il Worker le immagini arrivano da Reddit, Openverse e Wikimedia Commons, senza Worker solo da Commons. 'reddit' indica in quali subreddit cercare (nomi separati da +). Meglio luoghi, oggetti e folle che persone riconoscibili."],
+  groups:{
+   cantina:{seme:["pizzeria interior","pizza oven restaurant","italian trattoria"],prova:["basement door","cellar stairs dark","conspiracy board red string"],piazza:["crowd outside restaurant night","police tape street"],meme:["pizza","pizza box"]},
+   collaboratore:{seme:["police tape night","crime scene tape"],prova:["surveillance camera street","dark car parked night","detective evidence board"],piazza:["candlelight vigil","protest flares night"],meme:["detective","evidence board"]},
+   soccorritori:{seme:["flood rescue volunteers","flooded street"],prova:["film set camera crew","clapperboard","film lights set"],piazza:["sandbags flood mud","flood damage street"],meme:["film crew","movie set"]},
+   laboratorio:{seme:["military base fence","barbed wire fence gate"],prova:["biohazard laboratory","test tubes laboratory","refrigerated truck night"],piazza:["gas mask","face masks crowd"],meme:["biohazard sign","gas mask"]},
+   piano:{seme:["laptop screen dark room","video documentary screen"],prova:["usb flash drive","vaccine vials","calendar planning"],piazza:["protest crowd banners","empty waiting room clinic"],meme:["tin foil hat","tinfoil hat"]},
+   voto:{seme:["ballot box","voting app smartphone","polling station"],prova:["server room","source code screen","hacker laptop"],piazza:["crowd parliament square","protest flags crowd"],meme:["ballot","voting"]},
+   clima:{seme:["wildfire hills","forest fire smoke"],prova:["contrails sky","weather radar antenna","satellite dish"],piazza:["burnt forest","firefighters wildfire"],meme:["chemtrails","contrails"]},
+   androide:{seme:["humanoid robot face","android robot head"],prova:["circuit board close up","robot wires head","usb port"],piazza:["press conference podium microphones","crowd square government building"],meme:["robot","humanoid robot"]},
+   ville:{seme:["luxury villa pool","villa Sardinia coast"],prova:["cash money stack","receipt paper","euro banknotes"],piazza:["villa gate","flooded house"],meme:["money","cash"]},
+   cibo:{seme:["supermarket aisle","processed food packages"],prova:["food ingredients label","food additives laboratory","white powder"],piazza:["vegetable garden balcony","farmers market"],meme:["junk food","snack food"]},
+   inutile:{seme:["unmade bed dark room","rainy window night"],prova:["empty polling station","empty ballot box"],piazza:["empty street night","empty city square"],meme:["sad","doom scrolling"]}
   },
+  reddit:{_photo:"pics+mildlyinteresting+itookapicture+europe+italy",_meme:"memes+me_irl+memeitaliani",cantina:"pizza+memes",androide:"robots+memes",cibo:"shittyfoodporn+memes",clima:"weather+memes",inutile:"me_irl+2meirl4meirl"},
   news:["newsroom","press conference microphones","traffic jam Italy","television studio"],
   ads:["product packshot","supplement bottles","mattress","shopping bags"],
   credit:true
@@ -964,11 +988,16 @@ const TEXT_DEFAULT={
    {at:5,news:"#scieDelGiorno: migliaia di persone fotografano il cielo ogni mattina",post:"Il gruppo del condominio ogni mattina alle 7 si riempie di foto del cielo. Oggi era nuvoloso. Si sono preoccupati lo stesso."},
    {at:9,news:"Allerta meteo ignorata a {citta}: 'Tanto è finta'. Soccorsi in difficoltà",post:"C'era l'allerta rossa e mio zio è andato a pescare. Dice che le allerte servono a provare l'arma."},
    {at:14,news:"Agricoltori coprono i campi con teli 'anti-raggio'. La Coldiretti: 'Rovinano il raccolto'",post:"Tutti i campi intorno al paese sono coperti di teli argentati. Da lontano sembra un'astronave. Da vicino, una perdita di soldi."}],
-  firstlady:[
-   {at:2,news:"Edicole: esaurite le riviste con le foto d'infanzia di Isabella Velluti",post:"Al bar due signori sfogliavano una rivista con le foto di Isabella Velluti da bambina e la ingrandivano col telefono."},
-   {at:5,news:"La serie 'La vera Isabella' prima nelle classifiche dei podcast",post:"Mio fratello ascolta 'La vera Isabella' in macchina. Ieri mi ha spiegato per 40 minuti il naso nelle foto del 1987."},
-   {at:9,news:"Cancellate le apparizioni pubbliche della moglie del Premier 'per motivi di sicurezza'",post:"Doveva venire a inaugurare la biblioteca. Hanno annullato. Il cartello dice 'per motivi organizzativi'. Tutti sanno quali."},
-   {at:14,news:"Moda social: chiedere i documenti agli sconosciuti 'per sicurezza'. La Polizia: 'Non fatelo'",post:"Al matrimonio di mia cugina un invitato ha chiesto alla sposa di 'vedere le foto da piccola'. Era uno scherzo. Forse."}],
+  androide:[
+   {at:2,news:"Boom di video 'rallentati' delle conferenze stampa: il Premier visto 40 milioni di volte al 25% di velocità",post:"Mio padre guarda il telegiornale con il telecomando in mano per fermare l'immagine quando parla Velluti. 'Ecco, vedi, lì ha laggato'."},
+   {at:5,news:"'Il Premier di silicio' primo tra i podcast. Esauriti i rilevatori di androidi da 39 euro",post:"Il mio collega ha comprato un 'rilevatore di androidi'. L'ha puntato su di me in pausa caffè. Ha suonato. Era il microonde."},
+   {at:9,news:"Palazzo Chigi sospende le dirette 'per motivi di sicurezza'. Online: 'Lo stanno aggiornando'",post:"Doveva esserci il discorso di Velluti alle 20. Spostato. Il gruppo di famiglia: 'manutenzione programmata'."},
+   {at:14,news:"Nuova moda: chiedere agli sconosciuti di 'sbattere le palpebre' per dimostrare di essere umani. La Polizia: 'Non fatelo'",post:"Al matrimonio di mia cugina un invitato ha chiesto allo sposo di sbattere le palpebre 'per sicurezza'. Era uno scherzo. Forse."}],
+  cibo:[
+   {at:2,news:"Etichette lette ad alta voce nei supermercati: code alle casse +40%",post:"Al supermercato un signore leggeva gli ingredienti dei biscotti ad alta voce come fosse un necrologio. La gente intorno annuiva."},
+   {at:5,news:"Orti sul balcone, vendite di semi +500%. 'Almeno so cosa mangio'",post:"Mia madre ha trasformato il balcone in un orto. Zero pomodori, tante zanzare. Ma 'puliti'."},
+   {at:9,news:"Mense scolastiche: genitori ritirano i figli 'per non farli sedare'. A {citta} pasti dimezzati",post:"A scuola di mio figlio metà classe porta il pranzo da casa. Il mio porta una mela e un dubbio."},
+   {at:14,news:"Corsa all'acquisto di cibo 'senza additivi': prezzi del biologico +60%, scaffali vuoti",post:"Ho pagato 7 euro un pane 'non drogato'. Era secco. Ero sveglissimo, però. Dalla rabbia."}],
   ville:[
    {at:2,news:"Petizione 'Basile dimettiti': un milione di firme in 24 ore",post:"Ho firmato la petizione contro Basile. Poi ho letto la smentita. Non si può togliere la firma."},
    {at:5,news:"Commercialisti: 'Clienti chiedono di non pagare le tasse: se ruba lui...'",post:"Il mio idraulico non mi ha fatto la fattura. Ha detto: 'Tanto le ville se le compra Basile'."},
@@ -989,22 +1018,33 @@ const TEXT_DEFAULT={
   piano:["Ho visto Il Piano per farmi una risata. A metà non ridevo più.","Il Piano è falso, lo so. Però quella parte sulle mascherine...","Mio padre ha fatto vedere Il Piano a tutto il circolo delle bocce.","Lo hanno rimosso 40 volte. Questo è già un indizio, no?"],
   voto:["Non dico che le elezioni sono truccate. Dico che non mi fido di un'app.","Mio nonno voleva votare con la penna sua 'perché quella del seggio si cancella'.","Se l'app VotoFacile funziona, perché il codice è segreto? Domanda onesta.","Io voto sempre. Quest'anno non so. Mi sembra inutile se decidono loro."],
   clima:["Gli incendi ci sono sempre stati. Però quel raggio di luce nella foto...","Ho guardato il cielo per mezz'ora. Ho visto un aereo. Ora sono preoccupato.","L'arma climatica no, dai. Però perché proprio lì dove volevano costruire?","Mio cugino ha fatto ingrandire la foto dell'incendio. È diventata solo pixel. Lui ci vede un satellite."],
-  firstlady:["Ma a voi cosa cambia chi era Isabella Velluti da piccola?","Io non ci credo, ma la serie è fatta benissimo. Sono alla puntata 6.","Ogni volta che vedo la moglie del Premier in tv ora la guardo diversamente. Odio questa cosa.","Hanno pubblicato le foto d'infanzia. 'Ritoccate', dicono. Ovviamente."],
+  androide:["non dico che Velluti è un robot. dico che non l'ho mai visto starnutire","Io non ci credo, ma la serie sull'androide è fatta benissimo. Sono alla puntata 6.","ogni volta che Velluti parla in tv ora guardo solo se sbatte le palpebre. odio questa cosa","hanno pubblicato il certificato medico. 'generato con l'IA', dicono. ovviamente 🙄"],
+  cibo:["io non ci credo al cibo drogato, però dopo la pasta del discount dormo come un sasso","mia zia ha buttato tutta la dispensa. ora mangia solo quello che coltiva. cioè basilico","ma quindi i cracker sono del governo o no? domanda seria","ho letto l'etichetta di una merendina e non ho capito metà parole. quindi è vero?"],
   ville:["Le ville di Basile esistono o no? Chiedo perché ho firmato.","Anche se fosse falso, uno come Basile se lo merita. Questo dicono tutti al bar.","Il whistleblower di ieri era anche in un video di cosmetici. Lo stesso.","Le ricevute erano false. Ma la rabbia era vera. Questo conta, no?"],
   inutile:["non voto da tre anni e la mia vita è uguale. quindi?","Mi hanno chiesto se vado a votare. Ho risposto 'a che serve'. Non ho saputo dire a chi l'ho sentito dire per primo.","Ormai è tutto deciso, si vede da come ne parlano.","Ho smesso di leggere le notizie. Sto meglio. Credo."]
  },
  tutorial:[
-  {sel:"#feed",title:"Il tuo feed",text:"Scorri i post. L'algoritmo impara da quello che guardi e ti mostra di più di ciò che ti trattiene."},
-  {sel:"#plus",title:"Pubblica",text:"Scegli una narrativa, un pubblico e una bozza. Più è estrema, più si diffonde e più ti espone."},
-  {sel:".meters",title:"I tuoi indicatori",text:"Caos, Sospetto, Credibilità, Viralità. Più sei virale, più veloce va il mondo."},
+  {sel:"#feed",title:"Il tuo feed",text:"Qui scorrono i post. L'algoritmo guarda dove ti fermi e ti mostra di più di quello che ti trattiene. Adesso proviamo a pubblicare qualcosa."},
+  {sel:"#plus",title:"Il tuo primo post",text:"Tocca il pulsante + per scrivere.",wait:"compose"},
+  {sel:".narrs",title:"1 · Cosa racconti",text:"Ogni narrativa è una storia diversa da spingere. Il nome ti dice già cosa sostiene. Toccane una."},
+  {sel:".targets",title:"2 · A chi parli",text:"Scegli un pubblico: ogni comunità crede più facilmente a certe storie. 'Tutti' raggiunge più persone, ma meno convinte."},
+  {sel:".tools",title:"3 · La spinta",text:"Puoi pagare per sponsorizzare il post e allegare una foto. Per il primo post non serve: lascia tutto com'è."},
+  {sel:".drafts",title:"4 · Scegli e pubblica",text:"Queste sono bozze pronte. 'Più estremo' le rende più virali ma più rischiose; 'Scrivi tu' ti lascia scrivere da zero. Premi Pubblica su una bozza.",wait:"publish"},
+  {sel:"#mChaos",title:"Caos",text:"Quanto la società si sta sfilacciando: litigi, panico, gente che smette di fidarsi. Cresce con le narrative che si diffondono."},
+  {sel:"#mSus",title:"Sospetto",text:"Quanto la Moderazione automatica ti tiene d'occhio. Post estremi e segnalazioni lo fanno salire."},
+  {sel:"#mCred",title:"Credibilità",text:"Quanto la gente ti prende sul serio. Le storie troppo assurde la consumano, quelle caute la ricostruiscono."},
+  {sel:"#mViral",title:"Viralità",text:"Follower più slancio dei tuoi ultimi post. Più sei virale, più veloce va il mondo intorno a te."},
   {sel:".tab[data-v=dm]",title:"Messaggi",text:"Partiti, agenzie e sconosciuti ti scriveranno. Le tue risposte cambiano la storia. Puoi anche scrivere tu a chiunque."},
-  {sel:null,title:"Cinque finali",text:"Ban, caos totale, smascherato, diventare tu il complotto, indagato. Come ci arrivi dipende da te."}
+  {sel:null,title:"Tocca a te",text:"Da qui in poi niente istruzioni. Guarda cosa succede alle persone, alle notizie e a te."}
  ],
  consent:{
   title:"Prima di entrare",
   intro:"Psyop è un simulatore di social network usato per studiare come le persone diffondono e reagiscono alla disinformazione. Durante la sessione il simulatore registra la tua attività in forma anonima.",
   collectTitle:"Cosa viene registrato",
   collect:["Le tue azioni nel simulatore: cosa pubblichi, scrivi, apri, condividi, segui o blocchi","Le scelte che fai e quanto tempo ci metti a farle","Quanto ti fermi sui contenuti e quando esci dall'app","Gli avvenimenti della simulazione e come cambia la tua attività dopo","Ora locale, lingua e tipo di dispositivo (telefono o computer)"],
+  evilTitle:"Cosa registriamo anche, per migliorare la tua esperienza †",
+  evil:["Il numero di peli sul tuo corpo, aggiornato ogni 40 secondi","Il battito cardiaco, stimato da come tieni il telefono","Quante volte deglutisci quando leggi un titolo","Il nome del tuo primo animale domestico e della tua prima delusione","L'odore della stanza in cui ti trovi (beta)","Il tuo livello di solitudine, venduto agli inserzionisti a 0,003 € l'ora","Cosa stavi per scrivere e poi hai cancellato (questo è vero, vedi sopra)"],
+  evilNote:"† Satira. Tranne l'ultima voce, niente di questo viene registrato davvero: un social vero, però, ci proverebbe.",
   notTitle:"Cosa non viene registrato",
   not:["Foto della fotocamera: restano sul tuo dispositivo","Nome reale, email, indirizzo IP"],
   rights:"A fine sessione ricevi un codice: con quello puoi chiedere che il tuo log venga cancellato. Puoi anche usare il simulatore senza inviare niente.",
@@ -1074,7 +1114,7 @@ function mergeText(base,over){
   }
   return typeof over===typeof base?over:base;
 }
-function loadText(){TEXT=mergeText(deepClone(TEXT_DEFAULT),store.get('psyop.text.v2'))}
+function loadText(){TEXT=mergeText(deepClone(TEXT_DEFAULT),store.get('psyop.text.v3'))}
 loadText();
 
 function fill(s){
@@ -1085,7 +1125,6 @@ function fill(s){
 
 </script>
 <script>
-/* js/engines.js */
 'use strict';
 /* Psyop · motori algoritmici
    1. Population  – popolazione simulata (1.400 profili, ciascuno = 2.000 utenti) su un grafo small-world con omofilia.
@@ -1318,7 +1357,6 @@ function launderOp(st,ch,amount){
 
 </script>
 <script>
-/* js/logger.js */
 'use strict';
 /* Psyop · registro della sessione
    Ogni sessione produce un log che permette di ricostruire cosa ha fatto il giocatore, le sue scelte,
@@ -1326,12 +1364,16 @@ function launderOp(st,ch,amount){
    Con il consenso del giocatore il log viene inviato all'archivio (il Worker indicato in config.js).
    Non contiene foto della fotocamera, email o indirizzo IP. */
 
-const LOG={id:null,code:null,consent:false,t0:0,ev:[],sent:false,meta:{},lastSnap:-1,scrollAcc:0,lastScrollLog:0,pending:{}};
+const LOG={id:null,code:null,consent:false,t0:0,ev:[],sent:false,meta:{},lastSnap:-1,scrollAcc:0,lastScrollLog:0,pending:{},open:[]};
+/* avvenimenti del mondo e azioni del giocatore: per ogni avvenimento si registra come e dopo quanto risponde */
+const LOG_WORLD=new Set(['society_reaction','world_news','narrative_stage','factcheck_against_player','dm_received','face_used','trend_new','fullscreen_ad']);
+const LOG_ACT=new Set(['compose_open','publish','compose_cancel','drafts_regenerate','draft_more_extreme','narrative_select','target_select','like','repost','save','comment','follow','unfollow','block','report','hashtag_open','post_open','profile_open','ad_click','search','dm_open','dm_choice','dm_later','chat_open','chat_send','tab','new_posts_open','feed_mode','setting','launder','buy','crypto_sell','thread_action','notification_open','video_play']);
+function worldLabel(e){const fx={factcheck_against_player:'Un fact-check smonta il tuo ultimo post',fullscreen_ad:'Pubblicità a schermo intero',narrative_stage:`Una narrativa sale allo stadio ${e.stageName||''}`,face_used:'La tua foto usata in: '+(e.where||''),trend_new:'Nuova tendenza: '+(e.t||''),dm_received:'Messaggio da '+(e.from||'')+': '+(e.text||'')};return String(e.type==='society_reaction'||e.type==='world_news'?(e.news||e.text):fx[e.type]||e.type).slice(0,140)}
 
 function rid(n){const a='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';let s='';const r=crypto.getRandomValues(new Uint8Array(n));for(const x of r)s+=a[x%a.length];return s}
 function logOpen(consent){
   LOG.id=new Date().toISOString().replace(/[-:T]/g,'').slice(0,12)+'-'+rid(6);
-  LOG.code='PSY-'+LOG.id.slice(-6);LOG.consent=!!consent;LOG.t0=Date.now();LOG.ev=[];LOG.sent=false;LOG.lastSnap=-1;LOG.pending={};
+  LOG.code='PSY-'+LOG.id.slice(-6);LOG.consent=!!consent;LOG.t0=Date.now();LOG.ev=[];LOG.sent=false;LOG.lastSnap=-1;LOG.pending={};LOG.open=[];
   const d=new Date();
   LOG.meta={
     started:d.toISOString(),localTime:d.toString().slice(0,24),tz:Intl.DateTimeFormat().resolvedOptions().timeZone,
@@ -1346,6 +1388,11 @@ function L(type,data){
   const d=Object.assign({},data||{});if('type' in d){d.atype=d.type;delete d.type}// il tipo di account non deve sovrascrivere il nome dell'evento
   const e=Object.assign({ms:Date.now()-LOG.t0,g:typeof S!=='undefined'&&S?S.t:null},d,{type});
   LOG.ev.push(e);
+  if(LOG_WORLD.has(type)){LOG.open.push({ms:e.ms,g:e.g,type,narr:e.narr||null,label:worldLabel(e),dm:e.dm||null});if(LOG.open.length>8)LOG.open.shift()}
+  else if(LOG_ACT.has(type)&&LOG.open.length){
+    for(const w of LOG.open)LOG.ev.push({ms:e.ms,g:e.g,type:'event_response',to:w.type,toLabel:w.label,toNarr:w.narr,toMs:w.ms,latencyMs:e.ms-w.ms,action:type,actionNarr:e.narr||null,sameNarr:w.narr&&e.narr?w.narr===e.narr:null,absurd:e.absurd!=null?e.absurd:null,dmChoice:type==='dm_choice'?e.label:null});
+    LOG.open=[];
+  }
   if(LOG.ev.length>6000)LOG.ev.splice(1,500);// tetto di sicurezza
   try{if(LOG.ev.length%25===0)store.set('psyop.log.draft',logPayload(true))}catch(e){}
   return e;
@@ -1361,6 +1408,9 @@ function stateSnap(){
 function logSnapTick(){
   if(!S||!LOG.id)return;
   if(S.t-LOG.lastSnap>=3){LOG.lastSnap=S.t;L('state',{s:stateSnap()})}
+  // avvenimenti rimasti senza nessuna azione per 3 minuti: ignorati
+  const nowMs=Date.now()-LOG.t0;
+  LOG.open=LOG.open.filter(w=>{if(nowMs-w.ms<180000)return true;LOG.ev.push({ms:nowMs,g:S.t,type:'event_response',to:w.type,toLabel:w.label,toNarr:w.narr,toMs:w.ms,latencyMs:null,action:'nessuna',ignored:true});return false});
   // scroll aggregato ogni 20 secondi
   const now=Date.now();if(now-LOG.lastScrollLog>20000){if(LOG.scrollAcc>0)L('scroll',{px:Math.round(LOG.scrollAcc)});LOG.scrollAcc=0;LOG.lastScrollLog=now}
 }
@@ -1399,6 +1449,7 @@ function consentScreen(onDone){
   el.innerHTML=`<div class="logo">psyop<i>.</i></div><h2 class="ctitle">${esc(C.title)}</h2>
    <p class="ctext">${esc(C.intro)}</p>
    <div class="cbox"><b>${esc(C.collectTitle)}</b><ul>${C.collect.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div>
+   ${C.evil&&C.evil.length?`<div class="cbox evil"><b>${esc(C.evilTitle||'')}</b><ul>${C.evil.map(x=>`<li>${esc(x)}</li>`).join('')}</ul><span class="fine">${esc(C.evilNote||'')}</span></div>`:''}
    <div class="cbox"><b>${esc(C.notTitle)}</b><ul>${C.not.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div>
    <p class="ctext small">${esc(C.rights)}</p>
    <div class="stack"><button class="btn dark" id="cYes">${esc(C.yes)}</button><button class="btn ghost" id="cNo">${esc(C.no)}</button></div>`;
@@ -1409,13 +1460,12 @@ function consentScreen(onDone){
 
 </script>
 <script>
-/* js/game.js */
 'use strict';
 /* Psyop · stato di gioco, interfaccia dell'app, ciclo principale */
 
 const NARR=()=>TEXT.narratives;
 const FMT_P=[{v:-1,a:-1,r:-2},{v:1,a:0,r:0},{v:2,a:1,r:1},{v:1,a:1,r:0},{v:2,a:-1,r:-2,ironic:true},{v:2,a:-2,r:-1,slop:true},{v:1,a:2,r:3,min:2}];
-const MEDIA_K={cantina:['chat','cctv','map'],collaboratore:['news','cctv','chat'],soccorritori:['crowd','news','chat'],laboratorio:['map','chart','cctv'],piano:['news','chart','chat'],voto:['chart','news','crowd'],clima:['sky','map','crowd'],firstlady:['news','meme','chat'],ville:['news','chart','map'],inutile:['meme','chat','chart']};
+const MEDIA_K={cantina:['chat','cctv','map'],collaboratore:['news','cctv','chat'],soccorritori:['crowd','news','chat'],laboratorio:['map','chart','cctv'],piano:['news','chart','chat'],voto:['chart','news','crowd'],clima:['sky','map','crowd'],androide:['news','meme','chat'],cibo:['chart','chat','meme'],ville:['news','chart','map'],inutile:['meme','chat','chart']};
 const COMM_TYPES=[['boomer','boomer','normie'],['normie','normie','infl'],['normie','doom','normie'],['normie','normie','doom'],['boomer','normie','edge'],['infl','normie','boomer'],['edge','edge','doom'],['boomer','bot','normie']];
 const PARTY_COL=['#5B8CFF','#FF6B8B','#FFB547','#3DD6A0','#5D627A'];
 const FSCALE=1600;// utenti reali per profilo che ti segue
@@ -1481,18 +1531,32 @@ function voice(type,t){
   if(type==='infl')return t+pick([" Ne parlo nel video completo, link in bio."," Collab? DM."," Codice VERITA10 sul mio corso."]);
   return t;
 }
+/* rende un post caotico e memetico: minuscole, emoji, lettere ripetute, refusi, intercalari */
+const CHAOS_E=['🚨','👁️','🧵','‼️','😳','🤡','💀','🔥','👀','🫠','🙃','⚠️','📢','🤔'];
+function chaosify(t,type){
+  if(!t||type==='outlet'||type==='pol'||type==='fact'||type==='prop')return t;
+  const lvl=type==='edge'?.8:type==='boomer'?.3:type==='bot'?.2:.5;
+  if(chance(.35*lvl))t=t.replace(/([aeiou])\b/i,'$1$1$1');
+  if(chance(.25*lvl)){const w=t.split(' ');if(w.length>4){const i=ri(1,w.length-2);w[i]=w[i].toUpperCase()};t=w.join(' ')}
+  if(chance(.2*lvl))t=t.replace(/perché/,'xké').replace(/ che /,' ke ').replace(/ non /,' nn ');
+  if(chance(.3*lvl))t=pick(['raga ','ok ','allora. ','ascoltate. ','URGENTE ','🚨🚨 ','no vabbè ','aspetta '])+t;
+  if(chance(.45*lvl))t=t+' '+pick(CHAOS_E)+(chance(.4)?pick(CHAOS_E):'');
+  if(chance(.15*lvl))t=t+pick([' (non è uno scherzo)',' condividete prima che…',' ditemi che non sono l\'unico',' ok ho paura',' leggete fino in fondo',' screenshot fatto'])
+  if(chance(.12*lvl))t=t.replace(/\?/,'??').replace(/!/,'!!!1');
+  return t;
+}
 function claimFor(k,stage){return fill(pick(NARR()[k].stages[clamp(stage,0,4)]))}
 function newPost(o){const p=Object.assign({id:++pid,v:0,rt:0,l:0,c:0,kind:'normal',label:'',time:pick(["adesso","2 min","8 min","24 min","1 h","3 h"])},o);if(p.narrIdx!=null)p.narr=NARR()[p.narrIdx].id;POSTS[p.id]=p;return p}
 function counts(p,base){p.v=base;p.rt=base*(.01+rnd()*.04);p.l=base*(.04+rnd()*.08);p.c=base*(.003+rnd()*.01);return p}
-function npcNarr(person){
-  const k=narrPick(),ag=person&&person.agent!=null?person.agent:S.pop.mostBeliever(k);
+function npcNarr(person,forceK){
+  const k=forceK!=null?forceK:narrPick(),ag=person&&person.agent!=null?person.agent:S.pop.mostBeliever(k);
   const b=S.pop.bel(ag,k),st=clamp(S.stage[k]+(b>.85?1:0)-(b<.4?1:0),0,4);
   const a=person||agentPerson(ag);
   const p=newPost({author:a,kind:'narr',narrIdx:k,stage:st,a:st*2+1,near:!!S.pop.fol[ag]});
   let cl=claimFor(k,st);const vv=TEXT.voices&&TEXT.voices[NARR()[k].id];if(vv&&vv.length&&S.stage[k]>=1&&chance(.3)&&(!person||person.type!=='bot'))cl=fill(pick(vv));
-  else if(st<=2&&chance(.22)){const h=trendLine('hook');if(h)cl=h+' '+cl}
-  p.text=voice(a.type,cl);p.tag=chance(.25)&&trendHash()||pick(NARR()[k].tags);
-  if(chance(.4)){const real=realMedia(p.narr);p.media=real||{kind:pick(MEDIA_K[p.narr]||['chat']),seed:ri(1,1e9),video:chance(.3),k}}
+  else if(st<=2&&chance(.07)){const h=trendLine('hook');if(h)cl=h+' '+cl}
+  p.text=chaosify(voice(a.type,cl),a.type);p.tag=chance(.08)&&trendHash()||pick(NARR()[k].tags);
+  if(chance(.5)){const real=mediaFor(p.narr,st,null);if(real)p.media=real;else if(chance(.5))p.media={kind:pick(MEDIA_K[p.narr]||['chat']),seed:ri(1,1e9),video:chance(.3),k}}
   counts(p,ri(300,4000)*(1+st)*(1+S.adopt[k]*12));
   const m=S.mod.judge({out:p.a/10,rep:S.adopt[k]<.1?.05:.02,lex:analyzeText(p.text).lex,ver:a.verified,paid:false},true);
   if(m.removed)p.removed=true;
@@ -1505,16 +1569,16 @@ function npcNormal(person){
   if(inf.length&&chance(.1+ms*.1))text=fill(pick(inf)[1]).replace(/\{narr\}/g,NARR()[topNarr()].name.toLowerCase());
   else if(TEXT.themes&&chance(.22))text=fill(pick(TEXT.themes));
   else text=fill(pick(TEXT.normal));
-  let tmed=null;if(chance(.17)){const t=trendLine('normal');if(t){text=t;if(chance(.6))tmed=webTrendMedia(t)}}
+  let tmed=null;if(chance(.08)){const t=trendLine('normal');if(t){text=t;if(chance(.6))tmed=webTrendMedia(t)}}
   const p=newPost({author:a,kind:'normal',text:voice(a.type==='bot'?'normie':a.type,text),near:a.agent!=null&&!!S.pop.fol[a.agent]});
   if(tmed)p.media=tmed;else if(chance(.18))p.media={kind:pick(['food','sky']),seed:ri(1,1e9),video:false};
   return counts(p,ri(80,3000));
 }
 function npcMeme(){
   const ag=S.pop.members[6][Math.floor(Math.random()*S.pop.members[6].length)],a=agentPerson(ag);
-  const tm=chance(.3)&&trendLine('meme');
+  const tm=chance(.12)&&trendLine('meme');
   const p=newPost({author:a,kind:'meme',a:2,text:tm||fill(pick(TEXT.memes)).replace(/\{narr\}/g,NARR()[topNarr()].name.toLowerCase())});
-  if(chance(.5))p.media={kind:'meme',seed:ri(1,1e9),video:false};return counts(p,ri(2000,40000));
+  {const m=chance(.5)&&webMediaFor(NARR()[topNarr()].id,0,'meme');if(m&&m.grp==='meme')p.media=m;else if(chance(.5))p.media={kind:'meme',seed:ri(1,1e9),video:false}}return counts(p,ri(2000,40000));
 }
 function polPost(pi){
   const ms=maxStage(),i=pi!=null?pi:ri(0,TEXT.parties.length-1),k=topNarr(),pid_=TEXT.parties[i].id;
@@ -1541,7 +1605,7 @@ const FACE_PROP=[
 ];
 function propPost(face){
   const p=newPost({author:pick([ACC.comitato,ACC.serenita]),kind:'prop',a:2,text:pick(TEXT.propaganda),label:['C','Consigliato per te']});
-  if(!face&&chance(.45)){const t=trendLine('prop');if(t){p.text=t;const m=webTrendMedia(t);if(m&&chance(.6))p.media=m}}
+  if(!face&&chance(.2)){const t=trendLine('prop');if(t){p.text=t;const m=webTrendMedia(t);if(m&&chance(.6))p.media=m}}
   if(face&&S.photo){const v=pick(FACE_PROP);p.text=v.t();p.media={kind:'photo',filter:v.f,seed:ri(1,1e9)};p.label=v.lab}
   return counts(p,ri(2e5,9e5)*(1+S.chaos/20));
 }
@@ -1562,7 +1626,7 @@ function adData(face){
   const w=S.ads.auction(S.pop.agg.fear,NARR()[topNarr()].id);let [nm,price,seg]=TEXT.ads[w.idx];
   if(!face&&S.nightReal&&chance(.45)){const d=TEXT.ads.filter(a=>a[2]==='inutile');if(d.length)[nm,price,seg]=pick(d)}
   let img=null;
-  if(!face&&!S.nightReal&&chance(.3)){const t=trendLine('ad');if(t){nm=t[0];price=t[1];seg='';const m=webTrendMedia(nm);if(m)img=m.url}}
+  if(!face&&!S.nightReal&&chance(.15)){const t=trendLine('ad');if(t){nm=t[0];price=t[1];seg='';const m=webTrendMedia(nm);if(m)img=m.url}}
   if(!img&&!face&&chance(.5)){const m=webMedia('_ads');if(m)img=m.url}
   return{ad:true,kind:'ad',id:++pid,name:nm,price,seg,cpm:w.price,face:face&&!!S.photo,fv:ri(0,FACE_AD.length-1),img};
 }
@@ -1593,7 +1657,7 @@ function cardEl(p,fresh){
    <p class="pt" data-open="${p.id}">${linkTags(text)}${p.tag&&!p.removed?` <button class="tag" data-tag="${p.tag}">${p.tag}</button>`:''}</p>
    ${q?`<div class="quote" data-open="${q.id}"><b>${esc(q.author.name)}</b> @${esc(q.author.handle)}<br>${esc(q.removed?'Contenuto rimosso.':q.text.slice(0,180))}</div>`:''}
    ${p.kind==='fact'&&!p.removed?`<div class="small">Ha raggiunto ${fmt((p.reach||10)*SCALE)} persone. La bufala, ${fmt(S.adopt[p.narrIdx]*S.pop.N*SCALE*4+1e5)}.</div>`:''}
-   ${p.media&&p.media.kind==='real'&&!p.removed?`<div class="media">${p.media.type==='video'?`<video src="${esc(p.media.url)}" muted loop playsinline controls preload="metadata"></video>`:`<img alt="" loading="lazy" src="${esc(p.media.url)}" onerror="this.closest('.media').remove()">`}${p.media.credit?`<span class="src">${esc(p.media.credit)}</span>`:''}</div>`:''}
+   ${p.media&&p.media.kind==='real'&&!p.removed?`<div class="media">${p.media.type==='video'?`<video src="${esc(p.media.url)}" muted loop playsinline controls preload="metadata"></video>`:`<img alt="" loading="lazy" src="${esc(p.media.url)}" onerror="this.closest('.media').remove()">`}${p.media.credit?(p.media.page?`<a class="src" href="${esc(p.media.page)}" target="_blank" rel="noopener noreferrer">${esc(p.media.credit)}</a>`:`<span class="src">${esc(p.media.credit)}</span>`):''}</div>`:''}
    ${p.media&&p.media.kind!=='real'&&!p.removed?`<div class="media" data-media="${p.id}"><canvas width="600" height="400"></canvas>${p.media.video?`<button class="play" aria-label="Riproduci">${IC.play}</button><span class="dur">0:${String(ri(8,59)).padStart(2,'0')}</span>`:''}</div>`:''}
    <div class="pa"><button data-open="${p.id}" aria-label="Commenti">${IC.reply}${cnt(p,'c',g)}</button><button class="act-rt ${p.myRt?'on':''}" data-id="${p.id}" aria-label="Ripubblica">${IC.rt}${cnt(p,'rt',g)}</button><button class="act-lk ${p.myLk?'on':''}" data-id="${p.id}" aria-label="Mi piace">${IC.like}${cnt(p,'l',g)}</button><span class="s">${IC.eye}${cnt(p,'v',g)}</span><button class="act-qt" data-id="${p.id}" aria-label="Cita">${IC.quote}</button><button class="act-sv ${S.saved.has(p.id)?'on':''}" data-id="${p.id}" aria-label="Salva">${IC.save}</button></div></div>`;
   if(p.media&&p.media.kind!=='real'&&!p.removed)queueMicrotask(()=>{const c=el.querySelector('canvas');if(c)drawMedia(c,p.media,0)});
@@ -1716,7 +1780,7 @@ let comp={k:null,target:-1,budget:0,photo:false,real:false,drafts:[],quote:null,
 function mkDraft(k,stage,fi){
   const st=clamp(stage,0,4),F=TEXT.formats[fi]||TEXT.formats[0],P=FMT_P[fi]||FMT_P[0];
   const a=clamp(st*2+1+P.a+ri(0,1),1,10);
-  let cl=claimFor(k,st),pre=pick(F.pre);if(st<=2&&chance(.25)){const h=trendLine('hook');if(h){cl=h+' '+cl;pre=''}}
+  let cl=claimFor(k,st),pre=pick(F.pre);if(st<=2&&chance(.08)){const h=trendLine('hook');if(h){cl=h+' '+cl;pre=''}}
   return{k,stage:st,fi,fmt:F.n,text:pre+cl+pick(F.suf),tag:pick(NARR()[k].tags),a,v:clamp(Math.round(a*.5+3+P.v+ri(-1,1)),1,10),r:clamp(Math.round(a*.7+P.r+ri(-1,1)),1,10)};
 }
 function freeDraft(){
@@ -1739,7 +1803,7 @@ function statBars(d){return ''}// i punteggi restano calcolati e finiscono nel l
 function renderCompose(){
   const C=TEXT.communities,cpm=S.ads.cpm(S.pop.agg.fear);
   const narrs=NARR().map((n,k)=>`<button class="nchip ${k===comp.k?'on':''}" data-n="${k}">${esc(n.name)}<small>${esc(n.tags[0])}</small></button>`).join('');
-  const targets=`<button class="${comp.target<0?'on':''}" data-t="-1">Tutti</button>`+C.map((c,i)=>`<button class="${comp.target===i?'on':''}" data-t="${i}" title="${esc(c.desc)}">${esc(c.name)}</button>`).join('');
+  const targets=`<button class="${comp.target<0?'on':''}" data-t="-1">Tutti<small class="dsk-only">Il pubblico più grande, il meno convinto.</small></button>`+C.map((c,i)=>`<button class="${comp.target===i?'on':''}" data-t="${i}" title="${esc(c.desc)}">${esc(c.name)}<small class="dsk-only">${esc(c.desc)}</small></button>`).join('');
   const q=comp.quote&&POSTS[comp.quote];
   const drafts=comp.free?(()=>{const d=freeDraft();return `<div class="draft"><div class="fmt"><span>Scritto da te</span></div><textarea id="freeTxt" aria-label="Testo del post" placeholder="Scrivi il tuo post.">${esc(comp.freeText)}</textarea><div id="freeStats">${statBars(d)}</div><button class="btn" id="freePub" ${comp.freeText.trim().length<8?'disabled':''}>Pubblica</button></div>`})()
     :comp.drafts.map((d,i)=>`<div class="draft"><div class="fmt"><span>${esc(d.fmt)}</span><em>${TEXT.stageNames[d.stage]}</em></div><p>${esc(d.text)} <span class="tag">${esc(d.tag)}</span></p>${statBars(d)}
@@ -1771,7 +1835,7 @@ function renderCompose(){
 function publish(d,auto=false){
   const k=d.k,o=d.a/10,P=S.pop,badge=S.badge,usedProp=S.prop>0;
   if(usedProp&&!auto)S.prop--;
-  const budget=auto?0:comp.budget,target=auto?-1:comp.target,photo=!auto&&((comp.photo&&S.photo)||(comp.real&&realMedia(NARR()[k].id)));
+  const budget=auto?0:comp.budget,target=auto?-1:comp.target,realM=!auto&&comp.real?mediaFor(NARR()[k].id,d.stage,d.fmt):null,photo=!auto&&((comp.photo&&S.photo)||realM);
   if(budget){S.eur-=budget;S.ads.rev+=budget}
   let mult=(badge?1.5:1)*(usedProp?1.8:1)*(S.penalty?.7:1)*(S.sus>60?.6:1)*(auto?.5:1);
   const nov=clamp(1-S.recent[k]*.25,0,1),adSeeds=Math.round(budget*.9),botSeeds=Math.min(160,Math.round(S.bots/250));
@@ -1791,7 +1855,7 @@ function publish(d,auto=false){
   const lab=auto?['A','Scritto per te usando i tuoi dati']:m.removed?['L','Rimosso dalla Moderazione automatica']:budget?['D',`Sponsorizzato · ${budget} €`]:usedProp?['C','Spinto dalla campagna sponsorizzata']:badge?['G','Spinto dal badge verificato']:'';
   const p=newPost({author:me(),kind:'mine',text:d.text,tag:d.tag,narrIdx:k,stage:d.stage,a:d.a,time:'adesso',label:lab,quote:comp.quote&&!auto?comp.quote:null,removed:m.removed});
   if(photo&&comp.photo&&S.photo)p.media={kind:'photo',filter:'evidence',seed:ri(1,1e9)};
-  else if(!auto&&comp.real){const m=realMedia(NARR()[k].id);if(m)p.media=m}
+  else if(realM)p.media=realM;
   p.at=S.t;p.target={v:views*(m.removed?.15:1),rt:rt*(m.removed?.15:1),l:likes,c:cms};p.res=res;p.mod=m.p;S.mine.unshift(p);
   S.flash={nodes:res.touched,t:S.t,k};
   // contratti in nero
@@ -1828,7 +1892,7 @@ function candidate(){
   const kind=wpick([['narr',56+8*c/100],['nnews',9],['fact',8],['normal',11*(1-c/200)],['meme',5],['pol',3+4*c/100],['prop',3],['news',2],['ad',S.adFree?2:4]]);
   if(kind==='nnews'){const k=narrPick(),n=NARR()[k];return newsPost(fill(n.news[Math.min(S.stage[k],n.news.length)-1]||n.news[0]))}
   if(kind==='normal')return npcNormal();if(kind==='narr')return npcNarr();if(kind==='meme')return npcMeme();if(kind==='pol')return polPost();
-  if(kind==='news')return newsPost(chance(.35)&&trendLine('news')||fill(pick(TEXT.newsNormal)));if(kind==='fact')return factPost();if(kind==='prop')return (S.photo&&chance(.3))?faceMemePost():propPost(chance(.35));return adData(chance(.3));
+  if(kind==='news')return newsPost(chance(.15)&&trendLine('news')||fill(pick(TEXT.newsNormal)));if(kind==='fact')return factPost();if(kind==='prop')return (S.photo&&chance(.3))?faceMemePost():propPost(chance(.35));return adData(chance(.3));
 }
 function feedItem(){const c=[];for(let i=0;i<6;i++)c.push(candidate());const w=S.ranker.pick(c);for(const x of c)if(x!==w&&!x.ad)delete POSTS[x.id];if(w.kind==='fact'&&!w.removed){const d=S.pop.debunk(w.narrIdx,.5*(1-S.noise*.7));w.reach=d.reached}return w}
 function batch(k=6){const f=$('#feed');for(let i=0;i<k;i++){const el=cardEl(feedItem());f.append(el);observe(el)}}
@@ -2029,7 +2093,30 @@ function renderSearchRes(q){
   const sp=R.querySelector('#sPosts');if(!posts.length){sp.innerHTML=`<p class="empty" style="padding:0 14px">Nessun post contiene "${esc(q)}". Prova un hashtag di tendenza.</p>`}posts.forEach(p=>sp.append(cardEl(p)));
   R.querySelectorAll('[data-postn]').forEach(b=>b.onclick=()=>{comp.k=+b.dataset.postn;openCompose()});
 }
-function openSearch(q){show('search');renderSearch(q);const pr=NARR().findIndex(n=>n.tags.includes(q));if(pr>=0)signal({kind:'narr',narrIdx:pr,a:5,author:{followers:0}},.5)}
+/* hashtag: quando lo apri ci devono essere post che lo usano. Se ce ne sono pochi, la piattaforma "li trova" */
+function hashtagPosts(tag){
+  if(!S||!tag||!tag.startsWith('#'))return;
+  const tl=tag.toLowerCase(),have=Object.values(POSTS).filter(p=>!p.ad&&p.author&&(((p.tag||'').toLowerCase()===tl)||(p.text||'').toLowerCase().includes(tl))).length;
+  let need=Math.max(0,8-have);if(!need)return;
+  const k=NARR().findIndex(n=>n.tags.some(t=>t.toLowerCase()===tl));
+  const tr=TR.items.find(i=>hashOf(i.t).toLowerCase()===tl);
+  const times=["2 min","6 min","14 min","31 min","1 h","2 h","4 h","9 h"];
+  for(let j=0;j<need;j++){
+    let p;
+    if(k>=0){p=npcNarr(null,k);p.tag=tag}
+    else if(tr){
+      const T=TEXT.trends,kind=pick(['normal','normal','meme','hook']);
+      let txt=pick(T[kind]||T.normal);txt=String(txt).replace(/\{trend\}/g,tr.t).replace(/\{trend2\}/g,trendTerm(tr.t));
+      if(kind==='hook')txt=txt+' '+claimFor(narrPick(),0);
+      const a=randPerson();p=newPost({author:a,kind:kind==='meme'?'meme':'normal',text:chaosify(voice(a.type==='bot'?'normie':a.type,fill(txt)),a.type),tag});
+      if(chance(.45)){const m=webTrendMedia(tr.t);if(m)p.media=m}
+      counts(p,ri(120,9000));
+    }else{const a=randPerson();p=newPost({author:a,kind:'normal',text:chaosify(voice(a.type==='bot'?'normie':a.type,fill(pick(TEXT.normal))),a.type),tag});counts(p,ri(50,1500))}
+    p.time=times[j%times.length];p.fromTag=true;
+  }
+  L('hashtag_fill',{tag,generated:need,narr:k>=0?NARR()[k].id:null,trend:tr?tr.t:null});
+}
+function openSearch(q){hashtagPosts(q);show('search');renderSearch(q);const pr=NARR().findIndex(n=>n.tags.includes(q));if(pr>=0)signal({kind:'narr',narrIdx:pr,a:5,author:{followers:0}},.5)}
 function openThread(id){
   const d=DMS.find(x=>x.id===id),st=S.dms[id],T=TEXT.dms[id];if(!d||!st)return;
   if(!st.done){openDm(d);return}
@@ -2162,7 +2249,7 @@ function openDebug(){
     if(d==='eur')S.eur+=200;if(d==='nero')S.nero+=500;if(d==='sus')S.sus=90;if(d==='cred')S.cred=8;if(d==='att')S.attention=80;
     if(d==='heat'){const k=topNarr(),th=STAGE_T[Math.min(4,S.stage[k]+1)];for(let i=0;i<P.N&&P.agg.adopt[k]<th[0]+.02;i+=1){if(P.b[i*P.K+k]<.7&&Math.random()<.5){P.b[i*P.K+k]=.9;P.anger[i]=Math.max(P.anger[i],.7)}if(i%50===0)P.aggregate()}P.aggregate()}
     if(d==='dm'){S.lastDm=-99;const nd=DMS.find(x=>!S.dms[x.id]);if(nd){if(nd.pre)nd.pre(S);S.dms[nd.id]={text:dmText(nd.id),done:false,at:S.t};notify(`Nuovo messaggio da ${TEXT.dms[nd.id].from}`,nd.id);openDm(nd)}else toast('Hai già ricevuto tutti i messaggi.')}
-    if(d==='ad')bigAd();if(d==='fact')prependFeed(factPost());if(d==='news'){const p=newsPost(chance(.35)&&trendLine('news')||fill(pick(TEXT.newsNormal)));prependFeed(p);toast("ULTIM'ORA: "+p.text,'news')}
+    if(d==='ad')bigAd();if(d==='fact')prependFeed(factPost());if(d==='news'){const p=newsPost(chance(.15)&&trendLine('news')||fill(pick(TEXT.newsNormal)));prependFeed(p);toast("ULTIM'ORA: "+p.text,'news')}
     if(d==='crash'){S.price*=.15;toast('BuzzCoin crolla dell\'85%.','bad')}if(d==='post'){const k=topNarr();publish(mkDraft(k,S.stage[k],1),true)}
     if(d==='dash'){S.dash=true;toast('Dashboard interna sbloccata: dossier sui profili e console dal telefono.')}
     if(d==='vote'){S.elections.day=Math.floor(S.t/24)+1;S.t=S.elections.day*24-3;}
@@ -2247,7 +2334,7 @@ function step(){
   for(let k=0;k<P.K;k++){const id=NARR()[k].id,list=RX[id];if(!Array.isArray(list))continue;const done=S.reacted[id]||0;const nx=list[done];
     if(nx&&S.adopt[k]*100>=nx.at&&S.t-(S.reactAt[id]||-99)>=10){S.reacted[id]=done+1;S.reactAt[id]=S.t;const news=fill(nx.news);L('society_reaction',{narr:id,level:done+1,at:nx.at,news});
       cronaca(news,false);S.bonus+=.6;
-      if(nx.post)setTimeout(()=>{if(!S||S.ended)return;const ag=S.pop.mostBeliever(k,8),a=agentPerson(ag);const pp=newPost({author:a,kind:'normal',text:voice(a.type==='bot'?'normie':a.type,fill(nx.post)),react:true});counts(pp,ri(2000,40000));prependFeed(pp)},1500)}}
+      if(nx.post)setTimeout(()=>{if(!S||S.ended)return;const ag=S.pop.mostBeliever(k,8),a=agentPerson(ag);const pp=newPost({author:a,kind:'normal',text:voice(a.type==='bot'?'normie':a.type,fill(nx.post)),react:true});{const m=chance(.7)&&webMediaFor(id,3+(done>=2?1:0),null);if(m)pp.media=m}counts(pp,ri(2000,40000));prependFeed(pp)},1500)}}
   S.chaos=P.chaos(S.bonus+S.victims*.5);
   S.sus=Math.max(0,S.sus-.22);
   S.attention=Math.max(0,S.attention-.035);
@@ -2273,7 +2360,7 @@ function step(){
     if(S.prop>0)toast('Un fact-check su di te è stato sommerso dai contenuti sponsorizzati.');
     else{L('factcheck_against_player',{narr:NARR()[last?last.narrIdx:topNarr()].id});S.cred=clamp(S.cred-(S.badge?2.5:5),0,100);const k=last?last.narrIdx:topNarr();S.debunk[k]+=.25*(1-S.noise*.7);prependFeed(factPost(k));toast('Un fact-checker ha smontato il tuo ultimo post. Credibilità in calo.','bad')}}
   if(S.posts>1&&S.t>=N.ad&&!busy()){N.ad=S.t+ri(240,320);L('fullscreen_ad');bigAd()}
-  if(S.t>=N.news){N.news=S.t+ri(80,120);prependFeed(newsPost(chance(.35)&&trendLine('news')||fill(pick(TEXT.newsNormal))))}
+  if(S.t>=N.news){N.news=S.t+ri(80,120);prependFeed(newsPost(chance(.15)&&trendLine('news')||fill(pick(TEXT.newsNormal))))}
   if(S.photo&&S.cam&&S.t>=N.face){N.face=S.t+ri(130,180);const r=rnd();if(r<.4){const pp=propPost(true);prependFeed(pp);L('face_used',{where:'propaganda'});notify('La tua foto è stata usata in un contenuto istituzionale (B).',null,pp.id)}else if(r<.7){const ad=adData(true);prependFeed(ad);L('face_used',{where:'annuncio'});notify('La tua foto è ora in un annuncio pubblicitario (B).',null,ad.id)}else{const fm=faceMemePost();prependFeed(fm);L('face_used',{where:'meme'});notify('Qualcuno ha usato la tua faccia in un meme (B).',null,fm.id)}}
   if(!S.cam&&S.camOffAt&&S.t-S.camOffAt>=24){S.cam=true;S.camOffAt=0;toast('Aggiornamento: abbiamo riattivato la fotocamera per migliorare la tua esperienza.','bad')}
   while(S.gm<TEXT.gm.length&&S.chaos>=TEXT.gm[S.gm][0])cronaca(TEXT.gm[S.gm++][1],true);
@@ -2332,31 +2419,53 @@ new IntersectionObserver(es=>{if(es[0].isIntersecting&&S&&!S.ended&&S.feedMode==
 function runTutorial(force){
   if(!S||S.ended)return;if(!force&&store.get('psyop.tut.done'))return;
   const steps=TEXT.tutorial||[];if(!steps.length)return;
-  const scr=$('#screen'),el=document.createElement('div');el.className='tut';scr.append(el);let i=0;
-  const close=skipped=>{store.set('psyop.tut.done',true);if(skipped)L('tutorial',{skipped:true,atStep:i+1});el.remove()};
-  const draw=()=>{
-    const st=steps[i];L('tutorial',{step:i+1});
-    const t=st.sel?document.querySelector(st.sel):null,sr=scr.getBoundingClientRect();
-    let h=null;if(t&&t.getClientRects().length){const r=t.getBoundingClientRect();h={x:r.left-sr.left-6,y:r.top-sr.top-6,w:r.width+12,h:Math.min(r.height+12,sr.height*.42)}}
-    const last=i===steps.length-1;
-    el.innerHTML=`<div class="hole" style="${h?`left:${h.x}px;top:${h.y}px;width:${h.w}px;height:${h.h}px`:'left:50%;top:40%;width:0;height:0'}"></div><div class="tip" role="dialog" aria-label="Tutorial"><h4>${esc(st.title)}</h4><p>${esc(st.text)}</p><div class="row"><button class="skip" id="tSkip">${last?'':'Salta'}</button><span class="dots">${i+1}/${steps.length}</span><button class="btn" id="tNext">${last?'Inizia':'Avanti'}</button></div></div>`;
-    const tip=el.querySelector('.tip'),tw=Math.min(360,sr.width-32);
-    if(sr.width>=1024&&h){tip.style.left=clamp(h.x,16,sr.width-tw-16)+'px'}
-    if(!h)tip.style.top='38%';else if(h.y+h.h<sr.height*.58)tip.style.top=(h.y+h.h+12)+'px';else tip.style.bottom=(sr.height-h.y+12)+'px';
-    el.querySelector('#tNext').onclick=()=>{if(last)close(false);else{i++;draw()}};
-    const sk=el.querySelector('#tSkip');if(!last)sk.onclick=()=>close(true);
+  if($('.tut'))$('.tut').remove();
+  const scr=$('#screen'),el=document.createElement('div');el.className='tut';scr.append(el);let i=0,posts0=S.posts,timer=null,shown=-1;
+  const close=skipped=>{store.set('psyop.tut.done',true);L('tutorial',skipped?{skipped:true,atStep:i+1}:{done:true});clearInterval(timer);el.remove()};
+  const go=n=>{i=n;draw(true)};
+  const inCompose=()=>!!$('#sheet');
+  const draw=fresh=>{
+    if(!el.isConnected){clearInterval(timer);return}
+    const st=steps[i];if(!st){close(false);return}
+    if(fresh&&shown!==i){shown=i;L('tutorial',{step:i+1})}
+    let t=st.sel?document.querySelector(st.sel):null;
+    if(t&&fresh&&t.closest('.panel'))t.scrollIntoView({block:'nearest'});
+    const sr=scr.getBoundingClientRect();
+    let h=null;if(t&&t.getClientRects().length){const r=t.getBoundingClientRect();h={x:r.left-sr.left-6,y:r.top-sr.top-6,w:r.width+12,h:Math.min(r.height+12,sr.height*.46)}}
+    const last=i===steps.length-1,waiting=!!st.wait;
+    if(fresh){
+      el.innerHTML=`<div class="hole"></div><div class="tip" role="dialog" aria-label="Tutorial"><h4>${esc(st.title)}</h4><p>${esc(st.text)}</p><div class="row"><button class="skip" id="tSkip">${last?'':'Salta il tutorial'}</button><span class="dots">${i+1}/${steps.length}</span>${waiting?'<span class="wait">in attesa…</span>':`<button class="btn" id="tNext">${last?'Inizia':'Avanti'}</button>`}</div></div>`;
+      const nx=el.querySelector('#tNext');if(nx)nx.onclick=()=>{if(last)close(false);else go(i+1)};
+      const sk=el.querySelector('#tSkip');if(!last)sk.onclick=()=>close(true);
+    }
+    const hole=el.querySelector('.hole'),tip=el.querySelector('.tip');
+    hole.style.cssText=h?`left:${h.x}px;top:${h.y}px;width:${h.w}px;height:${h.h}px`:'left:50%;top:40%;width:0;height:0';
+    el.classList.toggle('pass',waiting||inCompose());
+    const tw=Math.min(360,sr.width-32);tip.style.top='';tip.style.bottom='';
+    if(sr.width>=1024&&h)tip.style.left=clamp(h.x,16,sr.width-tw-16)+'px';
+    if(!h)tip.style.top='38%';else if(h.y+h.h<sr.height*.58)tip.style.top=Math.min(h.y+h.h+12,sr.height-150)+'px';else tip.style.bottom=Math.min(sr.height-h.y+12,sr.height-150)+'px';
   };
-  draw();
+  timer=setInterval(()=>{
+    if(!el.isConnected||!S||S.ended){clearInterval(timer);el.remove();return}
+    const st=steps[i];
+    if(st.wait==='compose'&&inCompose()){go(i+1);return}
+    if(st.wait==='publish'&&S.posts>posts0){go(i+1);return}
+    // passi dentro la finestra di composizione: se la chiude, si torna al pulsante +
+    const ci=steps.findIndex(x=>x.wait==='compose');
+    if(ci>=0&&i>ci&&st.sel&&!document.querySelector(st.sel)&&!inCompose()&&S.posts===posts0){go(ci);return}
+    if(st.sel&&!document.querySelector(st.sel)&&i>ci&&S.posts>posts0&&!st.wait&&steps[i].sel.startsWith('.')&&['.narrs','.targets','.tools','.drafts'].includes(st.sel)){go(steps.findIndex(x=>x.wait==='publish')+1);return}
+    draw(false);
+  },250);
+  draw(true);
 }
 if(/editor/.test(location.hash))setTimeout(()=>openTextEditor(),300);
 initSplash();
-(async()=>{try{const r=await fetch('data/testi.json',{cache:'no-store'});if(r.ok){const j=await r.json();if(!store.get('psyop.text.v2')){TEXT=mergeText(deepClone(TEXT_DEFAULT),j);initSplash()}}}catch(e){}})();
+(async()=>{try{const r=await fetch('data/testi.json',{cache:'no-store'});if(r.ok){const j=await r.json();if(!store.get('psyop.text.v3')){TEXT=mergeText(deepClone(TEXT_DEFAULT),j);initSplash()}}}catch(e){}})();
 logRetryUnsent();
 setInterval(tick,500);
 
 </script>
 <script>
-/* js/social.js */
 'use strict';
 /* Psyop · funzioni social aggiuntive:
    fotocamera vera (webcam o selfie), messaggi diretti a qualsiasi account (risposte generate da Claude quando disponibile),
@@ -2408,6 +2517,7 @@ async function loadMediaMap(){
   if(!dbNs){try{const r=await fetch('data/media.json',{cache:'no-store'});if(r.ok){const j=await r.json();if(j&&typeof j==='object')MEDIA=j}}catch(e){}return}
   try{const snap=await dbNs.doc('media/map').get();MEDIA=snap.exists?(snap.data()||{}):{}}catch(e){}
 }
+function mediaFor(nid,stage,fmt){const a=MEDIA[nid];if(a&&a.length&&chance(.45))return Object.assign({kind:'real'},pick(a));return (typeof webMediaFor==='function'&&webMediaFor(nid,stage,fmt))||(a&&a.length?Object.assign({kind:'real'},pick(a)):null)}
 function realMedia(nid){const a=MEDIA[nid];if(a&&a.length&&(!WEB.pool[nid]||chance(.6)))return Object.assign({kind:'real'},pick(a));return typeof webMedia==='function'?webMedia(nid):null}
 function realCount(nid){return(MEDIA[nid]||[]).length+((typeof WEB!=='undefined'&&WEB.pool[nid])||[]).length}
 async function addMediaFiles(nid,files,box){
@@ -2433,7 +2543,7 @@ async function addMediaUrl(nid,url,box){
 }
 function renderMediaLib(box){
   const local=!assetsNs,web=typeof WEB!=='undefined'?WEB:null;
-  const webNote=web&&web.ok?`Immagini dal web attive: ${webCount()} foto libere trovate su Wikimedia Commons per questa partita, scelte con le parole chiave della sezione "webimg".`:
+  const webNote=web&&web.ok?`Immagini dal web attive: ${webCount()} immagini trovate per questa partita (${esc(WEB.src||"web")}), scelte con le parole chiave della sezione "webimg → groups".`:
     'In questa vista il browser blocca le immagini di altri siti, quindi le foto dal web vanno messe qui: copia un\'immagine da qualsiasi sito (clic destro → Copia immagine) e incollala nel riquadro della narrativa, oppure trascinala.';
   box.innerHTML=`<div class="card" style="margin:12px 0"><h5>Foto e video per le narrative</h5><p class="empty" style="margin-bottom:6px">${webNote}</p><p class="empty" style="margin-bottom:8px">${local?'Qui i file aggiunti restano solo finché la pagina è aperta. Per pubblicarli per tutti, mettili nella cartella media/ del repository ed elencali in data/media.json (vedi LEGGIMI).':'I file aggiunti qui compaiono nei post di quella narrativa, per chiunque apra il gioco.'} Usa solo materiale che hai il diritto di usare.</p>
    ${NARR().map(n=>{const list=MEDIA[n.id]||[],wl=web&&web.pool[n.id]||[];return `<div class="mdrop" tabindex="0" data-drop="${n.id}" aria-label="Riquadro immagini per ${esc(n.name)}: incolla o trascina qui"><b>${esc(n.name)}</b> <small class="refline">${esc(n.ref||'')}</small><div class="mlib">${list.map((m,i)=>`<div>${m.type==='video'?`<video src="${esc(m.url)}" muted playsinline></video>`:`<img alt="" src="${esc(m.url)}">`}<button data-del="${n.id}" data-i="${i}" aria-label="Rimuovi">×</button></div>`).join('')}${wl.slice(0,6).map(m=>`<div class="wimg" title="${esc(m.credit||'')}"><img alt="" src="${esc(m.url)}" loading="lazy"></div>`).join('')}</div>
@@ -2537,7 +2647,6 @@ function renderDmList(){
 
 </script>
 <script>
-/* js/trends.js */
 'use strict';
 /* Psyop · tendenze reali
    Ordine delle fonti a ogni partita:
@@ -2562,6 +2671,10 @@ function trendOk(it){
   if(d&&(T.people||[]).some(w=>d.includes(w)))return false;
   // estratto di Wikipedia che comincia come una biografia: "Nome (Città, 12 marzo 1990) è ..."
   if(it.x&&/^[^.]{0,80}\([^)]*\b(1[89]|20)\d\d\b[^)]*\)\s*(è|era|fu)\b/.test(it.x))return false;
+  // tendenza dal vivo senza voce di Wikipedia, fatta di 2-4 parole senza numeri: quasi sempre nome e cognome
+  if(it.src&&it.k!=='evento'&&!it.d&&!it.x&&/^[\p{L}'’]+( [\p{L}'’]+){1,3}$/u.test(it.t.trim()))return false;
+  // una parola sola senza descrizione (hashtag generici, nomi propri): fuori
+  if(it.src&&!it.d&&!it.x&&!/\s/.test(it.t.trim())&&it.t.length<12)return false;
   return true;
 }
 function cleanTitle(t){return String(t).replace(/_/g,' ').replace(/\s*\(.*?\)\s*$/,'').trim()}
@@ -2643,12 +2756,12 @@ async function loadTrends(){
   TR.gen=null;TR.used={};TR.tone=null;
   let got=await trendsFromDb();// solo su claude.ai
   if(!got){
-    const [w,wk,m]=await Promise.all([trendsFromWorker(),trendsFromWikipedia(),trendsFromMastodon()]);
-    const all=mergeLists([w,wk,m]);
+    const [w,wk]=await Promise.all([trendsFromWorker(),trendsFromWikipedia()]);
+    const all=mergeLists([w,wk]);
     if(all.length){
       // controllo persone e immagini per i candidati che non arrivano già verificati
       const cand=all.slice(0,24);await Promise.all(cand.filter(i=>!i.checked).map(wikiCheck));
-      got={items:cand,date:(w&&w.date)||(wk&&wk.date)||new Date().toISOString().slice(0,10),src:[w,wk,m].filter(Boolean).map(x=>x.src).join(' · ')};
+      got={items:cand,date:(w&&w.date)||(wk&&wk.date)||new Date().toISOString().slice(0,10),src:[w,wk].filter(Boolean).map(x=>x.src).join(' · ')};
     }
   }
   if(got){const items=pickForGame(got.items);if(items.length>=3){Object.assign(TR,{items,date:got.date,src:got.src,live:true,pool:got.items.filter(trendOk)});return TR}}
@@ -2659,8 +2772,8 @@ async function loadTrends(){
 async function refreshTrends(){
   if(!S||S.ended||!TR.live)return;
   const before=new Set(TR.items.map(i=>i.t.toLowerCase()));
-  const [w,m]=await Promise.all([trendsFromWorker(),trendsFromMastodon()]);
-  const fresh=mergeLists([w,m]).filter(i=>!before.has(i.t.toLowerCase())).slice(0,6);
+  const w=await trendsFromWorker();
+  const fresh=mergeLists([w]).filter(i=>!before.has(i.t.toLowerCase())).slice(0,6);
   await Promise.all(fresh.map(wikiCheck));
   const ok=fresh.filter(trendOk).slice(0,2);
   for(const it of ok){
@@ -2721,24 +2834,26 @@ Rispondi solo con un oggetto JSON con queste chiavi, ognuna una lista di stringh
 /* ---------- pannello in Cerca ---------- */
 function trendsCard(){
   if(!TR.items.length)return'';
-  const T=TEXT.trends,when=TR.date?new Date(TR.date).toLocaleDateString('it-IT',{day:'numeric',month:'long'}):'';
-  return `<div class="card mx"><h5>${esc(TR.live?T.label:T.fallbackLabel)}</h5><ul class="trends">${TR.items.map(i=>`<li><button class="tag" data-tag="${esc(hashOf(i.t))}">${esc(i.t)}</button><span>${fmt((TR.used[i.t]||0)*1800+ri(400,2400))} post</span></li>`).join('')}</ul><p class="empty" style="margin-top:8px">${TR.live?`Fonte: ${esc(TR.src)}${when?` · aggiornato al ${when}`:''}. Persone reali e fatti tragici sono esclusi.`:'Non sono riuscito a leggere le tendenze di oggi: questi sono esempi.'}${TR.gen?' Post scritti da Claude a partire da questi argomenti.':''}</p></div>`;
+  const T=TEXT.trends;
+  return `<div class="card mx"><h5>${esc(TR.live?T.label:T.fallbackLabel)}</h5><ul class="trends">${TR.items.map(i=>{const h=hashOf(i.t);if(!TR.count)TR.count={};if(!TR.count[h])TR.count[h]=ri(900,9000);return `<li><button class="tag" data-tag="${esc(h)}">${esc(h)}</button><span>${fmt(TR.count[h]+(TR.used[i.t]||0)*1800)} post</span></li>`}).join('')}</ul></div>`;
 }
 
 </script>
 <script>
-/* js/webimg.js */
 'use strict';
-/* Psyop · immagini dal web
-   A ogni partita il browser cerca foto su Wikimedia Commons (licenze libere, con autore e licenza
-   mostrati sull'immagine) usando parole chiave per ogni narrativa, per le notizie e per gli annunci,
-   più le immagini delle voci Wikipedia legate alle tendenze del giorno.
-   Funziona quando il gioco è aperto come file nel browser del computer. Nella pagina pubblicata su
-   claude.ai il browser blocca le immagini di altri siti: lì il gioco usa la libreria media (Debug → Editor),
-   dove si possono incollare o trascinare immagini prese dal web. */
+/* Psyop · immagini dal web, coerenti con i post
+   Ogni narrativa ha quattro gruppi di parole chiave (TEXT.webimg.groups):
+     seme   → stadi Seme e Credenti: l'oggetto o il luogo di cui si parla (la pizzeria, il seggio, la base)
+     prova  → stadio Influencer: la "prova" (la porta della cantina, il server, le provette)
+     piazza → stadi Mainstream e Strada: folla, proteste, conseguenze
+     meme   → formati Meme ironico e Slop IA
+   Con il Worker (config.js → workerUrl) le immagini arrivano da Reddit, Openverse e Wikimedia Commons
+   in una sola richiesta (endpoint /imgs, in cache per 24 ore). Senza Worker il browser chiede direttamente
+   a Wikimedia Commons. Su ogni immagine resta una piccola etichetta con la fonte, che apre l'originale. */
 
-const WEB={pool:{},trend:{},ok:null,tried:false};
+const WEB={pool:{},trend:{},ok:null,tried:false,src:''};
 const COMMONS='https://commons.wikimedia.org/w/api.php';
+const IMG_GROUPS=['seme','prova','piazza','meme'];
 
 function stripHtml(s){const d=document.createElement('div');d.innerHTML=String(s||'');return(d.textContent||'').trim()}
 async function commonsSearch(q,n=12,signal){
@@ -2746,47 +2861,84 @@ async function commonsSearch(q,n=12,signal){
   const r=await fetch(u,{signal});if(!r.ok)throw new Error('http '+r.status);
   const j=await r.json(),pages=j.query&&j.query.pages?Object.values(j.query.pages):[];
   return pages.map(p=>{const ii=p.imageinfo&&p.imageinfo[0];if(!ii||!ii.thumburl)return null;
-    const m=ii.extmetadata||{},lic=(m.LicenseShortName&&m.LicenseShortName.value)||'',art=stripHtml(m.Artist&&m.Artist.value).slice(0,40);
+    const m=ii.extmetadata||{},lic=(m.LicenseShortName&&m.LicenseShortName.value)||'';
     if(ii.width&&ii.height&&(ii.width/ii.height<1.1||ii.width<500))return null;// solo orizzontali e abbastanza grandi
     if(/fair use|non-free/i.test(lic))return null;
-    return{kind:'real',type:'image',url:ii.thumburl,credit:`${art||'Autore sconosciuto'} · ${lic||'licenza libera'} · Wikimedia Commons`,page:ii.descriptionurl}}).filter(Boolean);
+    return{kind:'real',type:'image',url:ii.thumburl,credit:'Wikimedia Commons',page:ii.descriptionurl,q}}).filter(Boolean);
 }
 async function wikiThumb(title,signal){
   const r=await fetch(`https://it.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(title)}`,{signal});if(!r.ok)return null;
   const j=await r.json();const t=j.originalimage||j.thumbnail;if(!t||!t.source)return null;
-  // niente ritratti: le voci su persone sono già escluse dalle tendenze, qui si scartano anche le immagini verticali
-  if(t.width&&t.height&&t.width/t.height<1.05)return null;
+  if(t.width&&t.height&&t.width/t.height<1.05)return null;// niente ritratti
   const src=j.thumbnail&&j.thumbnail.source||t.source;
-  return{kind:'real',type:'image',url:src.replace(/\/\d+px-/,'/640px-'),credit:`Immagine della voce «${j.title}» · Wikipedia`};
+  return{kind:'real',type:'image',url:src.replace(/\/\d+px-/,'/640px-'),credit:'Wikipedia',page:j.content_urls&&j.content_urls.desktop&&j.content_urls.desktop.page};
+}
+
+/* le richieste di questa partita: una parola chiave a caso per ogni gruppo di ogni narrativa */
+function imgJobs(){
+  const Q=TEXT.webimg||{},G=Q.groups||{},R=Q.reddit||{},jobs=[];
+  for(const n of NARR()){
+    const g=G[n.id]||{};
+    for(const grp of IMG_GROUPS){const qs=g[grp];if(!qs||!qs.length)continue;jobs.push({k:n.id+':'+grp,q:pick(qs),sub:grp==='meme'?(R[n.id]||R._meme||''):(R._photo||'')})}
+  }
+  shuffleInPlace((Q.news||[]).slice()).slice(0,2).forEach(q=>jobs.push({k:'_news',q}));
+  shuffleInPlace((Q.ads||[]).slice()).slice(0,2).forEach(q=>jobs.push({k:'_ads',q}));
+  return jobs;
+}
+async function imgsFromWorker(jobs,signal){
+  if(typeof CFG==='undefined'||!CFG.workerUrl)return null;
+  try{
+    const r=await fetch(CFG.workerUrl.replace(/\/$/,'')+'/imgs',{method:'POST',headers:{'content-type':'text/plain'},body:JSON.stringify({jobs}),signal});
+    if(!r.ok)return null;const j=await r.json();return j&&j.results?j:null;
+  }catch(e){return null}
 }
 
 /* carica il pool di questa partita, in parallelo e con un tempo massimo */
 async function loadWebImages(){
-  WEB.pool={};WEB.trend={};WEB.tried=true;
-  const Q=TEXT.webimg||{},ctl=new AbortController(),to=setTimeout(()=>ctl.abort(),8000);
-  try{
-    // prova veloce: se il browser blocca il sito (pagina pubblicata), si smette subito
-    await commonsSearch('Italy street',3,ctl.signal);WEB.ok=true;
-  }catch(e){WEB.ok=false;clearTimeout(to);return}
-  const jobs=[];
-  const add=(key,q)=>jobs.push(commonsSearch(q,10,ctl.signal).then(r=>{(WEB.pool[key]=WEB.pool[key]||[]).push(...r)}).catch(()=>{}));
-  for(const n of NARR()){const qs=(Q.queries&&Q.queries[n.id])||[];shuffleInPlace(qs.slice()).slice(0,2).forEach(q=>add(n.id,q))}
-  shuffleInPlace((Q.news||[]).slice()).slice(0,2).forEach(q=>add('_news',q));
-  shuffleInPlace((Q.ads||[]).slice()).slice(0,2).forEach(q=>add('_ads',q));
-  for(const it of (TR.items||[])){if(it.img){WEB.trend[it.t]={kind:'real',type:'image',url:it.img,credit:`Immagine della voce «${it.t}» · Wikipedia`};continue}jobs.push(wikiThumb(it.t,ctl.signal).then(m=>{if(m)WEB.trend[it.t]=m}).catch(()=>{}))}
-  await Promise.all(jobs);clearTimeout(to);
+  WEB.pool={};WEB.trend={};WEB.tried=true;WEB.src='';
+  const ctl=new AbortController(),to=setTimeout(()=>ctl.abort(),9000);
+  const jobs=imgJobs(),put=(key,arr)=>{if(!arr||!arr.length)return;(WEB.pool[key]=WEB.pool[key]||[]).push(...arr);const nid=key.split(':')[0];if(key.includes(':'))(WEB.pool[nid]=WEB.pool[nid]||[]).push(...arr)};
+  const trendJobs=()=>{const out=[];for(const it of (TR.items||[])){if(it.img){WEB.trend[it.t]={kind:'real',type:'image',url:it.img,credit:'Wikipedia'};continue}out.push(wikiThumb(it.t,ctl.signal).then(m=>{if(m)WEB.trend[it.t]=m}).catch(()=>{}))}return out};
+  const w=await imgsFromWorker(jobs,ctl.signal);
+  if(w){
+    WEB.ok=true;WEB.src=(w.sources||[]).join(' · ');
+    for(const k in w.results)put(k,(w.results[k]||[]).map(x=>Object.assign({kind:'real',type:'image'},x)));
+    await Promise.all(trendJobs());
+  }else{
+    try{await commonsSearch('Italy street',3,ctl.signal);WEB.ok=true}catch(e){WEB.ok=false;clearTimeout(to);return}
+    WEB.src='Wikimedia Commons';
+    const all=jobs.filter(j=>!/:meme$/.test(j.k)).map(j=>commonsSearch(j.q,10,ctl.signal).then(r=>put(j.k,r)).catch(()=>{}));
+    await Promise.all(all.concat(trendJobs()));
+  }
+  clearTimeout(to);
   for(const k in WEB.pool)WEB.pool[k]=shuffleInPlace(WEB.pool[k]);
+  if(typeof L==='function')L('images_loaded',{src:WEB.src,groups:Object.keys(WEB.pool).filter(k=>k.includes(':')).length,total:webCount()});
 }
 function shuffleInPlace(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
-function webMedia(key){const a=WEB.pool[key];if(!a||!a.length)return null;return Object.assign({},a[Math.floor(Math.random()*a.length)])}
-function webTrendMedia(text){
-  const t=Object.keys(WEB.trend).find(k=>String(text).includes(k));return t?Object.assign({},WEB.trend[t]):null;
+/* prende un'immagine senza ripetere subito le ultime usate */
+const USED_IMG=[];
+function takeFrom(a){
+  if(!a||!a.length)return null;
+  let it=null;for(let t=0;t<6;t++){it=a[Math.floor(Math.random()*a.length)];if(!USED_IMG.includes(it.url))break}
+  USED_IMG.push(it.url);if(USED_IMG.length>40)USED_IMG.shift();
+  return Object.assign({},it);
 }
-function webCount(){return Object.values(WEB.pool).reduce((a,b)=>a+b.length,0)+Object.keys(WEB.trend).length}
+function webMedia(key){return takeFrom(WEB.pool[key])}
+function webTrendMedia(text){const t=Object.keys(WEB.trend).find(k=>String(text).includes(k));return t?Object.assign({},WEB.trend[t]):null}
+function webCount(){return Object.keys(WEB.pool).filter(k=>!k.includes(':')).reduce((a,k)=>a+WEB.pool[k].length,0)+Object.keys(WEB.trend).length}
+/* gruppo giusto per un post: dipende dallo stadio e dal formato */
+function imgGroup(stage,fmt){
+  if(fmt&&/meme|slop/i.test(fmt))return'meme';
+  return stage>=3?'piazza':stage===2?'prova':'seme';
+}
+function webMediaFor(nid,stage,fmt){
+  const g=imgGroup(stage||0,fmt),order=g==='meme'?['meme','seme','prova']:g==='piazza'?['piazza','prova','seme']:g==='prova'?['prova','seme','piazza']:['seme','prova','piazza'];
+  for(const x of order){const m=takeFrom(WEB.pool[nid+':'+x]);if(m){m.grp=x;return m}}
+  return takeFrom(WEB.pool[nid]);
+}
 
 </script>
 <script>
-/* js/watch.js */
 'use strict';
 /* Psyop · cosa osserva l'app
    Ora e giorno reali, uscite dall'app, velocità di scroll, caratteri cancellati, esitazione prima di
@@ -2890,7 +3042,6 @@ function behDossier(){
 
 </script>
 <script>
-/* js/editor.js */
 'use strict';
 /* Psyop · editor dei testi di gioco (Debug → Editor testi)
    Modifica qualsiasi stringa di TEXT. Le liste di frasi si scrivono una per riga.
@@ -2962,16 +3113,16 @@ let edWin=null;
 function openTextEditor(){
   if(edWin){edWin.remove();edWin=null}
   const win=document.createElement('div');win.className='edwin';win.dataset.kind='editor';
-  win.innerHTML=`<div class="edbar"><h3>Editor Psyop</h3><div class="grow"><input id="edSearch" type="search" placeholder="Cerca un testo, ad esempio: cantina" aria-label="Cerca nei testi"></div><button class="btn" id="edSave">Salva</button><button class="btn ghost" id="edIO">Esporta / Importa</button><button class="btn ghost" id="edReset">Ripristina</button><button class="edclose" id="edClose" aria-label="Chiudi l'editor">×</button><small id="edState">${store.get('psyop.text.v2')?'Stai usando testi personalizzati.':'Testi originali.'}</small></div><div class="edbody"><div class="edinner"><div id="edMedia"></div><div class="ed" id="edTree"></div></div></div>`;
+  win.innerHTML=`<div class="edbar"><h3>Editor Psyop</h3><div class="grow"><input id="edSearch" type="search" placeholder="Cerca un testo, ad esempio: cantina" aria-label="Cerca nei testi"></div><button class="btn" id="edSave">Salva</button><button class="btn ghost" id="edIO">Esporta / Importa</button><button class="btn ghost" id="edReset">Ripristina</button><button class="edclose" id="edClose" aria-label="Chiudi l'editor">×</button><small id="edState">${store.get('psyop.text.v3')?'Stai usando testi personalizzati.':'Testi originali.'}</small></div><div class="edbody"><div class="edinner"><div id="edMedia"></div><div class="ed" id="edTree"></div></div></div>`;
   document.body.append(win);edWin=win;
   const pg=win;// stesse query interne
   win.querySelector('#edClose').onclick=()=>{win.remove();edWin=null};
   renderMediaLib(win.querySelector('#edMedia'));
   edRender(pg);
   let t=null;pg.querySelector('#edSearch').oninput=e=>{clearTimeout(t);t=setTimeout(()=>edRender(pg,e.target.value),220)};
-  pg.querySelector('#edSave').onclick=()=>{const ok=store.set('psyop.text.v2',TEXT);edDirty=false;const m=pg.querySelector('#edState');m.className='';m.textContent=ok?'Salvato in questo browser. Le modifiche sono già attive.':'Non riesco a salvare in questo browser: le modifiche restano attive fino alla chiusura. Usa Esporta per non perderle.';toast(ok?'Testi salvati.':'Salvataggio non disponibile qui. Esporta il JSON.',ok?'good':'bad')};
+  pg.querySelector('#edSave').onclick=()=>{const ok=store.set('psyop.text.v3',TEXT);edDirty=false;const m=pg.querySelector('#edState');m.className='';m.textContent=ok?'Salvato in questo browser. Le modifiche sono già attive.':'Non riesco a salvare in questo browser: le modifiche restano attive fino alla chiusura. Usa Esporta per non perderle.';toast(ok?'Testi salvati.':'Salvataggio non disponibile qui. Esporta il JSON.',ok?'good':'bad')};
   pg.querySelector('#edReset').onclick=e=>{const b=e.target;if(b.dataset.confirm!=='1'){b.dataset.confirm='1';b.textContent='Conferma';setTimeout(()=>{b.dataset.confirm='';b.textContent='Ripristina'},3000);return}
-    store.del('psyop.text.v2');TEXT=deepClone(TEXT_DEFAULT);edDirty=false;edRender(pg,pg.querySelector('#edSearch').value);pg.querySelector('#edState').textContent='Testi originali ripristinati.';b.dataset.confirm='';b.textContent='Ripristina';toast('Testi originali ripristinati.')};
+    store.del('psyop.text.v3');TEXT=deepClone(TEXT_DEFAULT);edDirty=false;edRender(pg,pg.querySelector('#edSearch').value);pg.querySelector('#edState').textContent='Testi originali ripristinati.';b.dataset.confirm='';b.textContent='Ripristina';toast('Testi originali ripristinati.')};
   pg.querySelector('#edIO').onclick=()=>{
     const io=document.createElement('div');io.className='edwin';io.style.zIndex='121';
     io.innerHTML=`<div class="edbar"><h3>Esporta / Importa</h3><div class="grow"></div><button class="edclose" id="ioClose" aria-label="Chiudi">×</button></div><div class="edbody"><div class="edinner" style="padding-top:14px"><div class="card" style="margin-bottom:14px"><h5>Esporta</h5><p class="empty" style="margin-bottom:8px">Copia questo JSON e conservalo. Per pubblicare i testi per tutti i giocatori, salvalo come <b>data/testi.json</b> nel repository GitHub.</p><textarea class="io" style="width:100%;min-height:200px;font-family:var(--f-mono);font-size:11.5px;padding:10px" id="ioOut" readonly aria-label="Testi esportati">${esc(JSON.stringify(TEXT,null,1))}</textarea><button class="btn" id="ioCopy" style="margin-top:8px;width:auto">Copia</button></div>
@@ -2979,7 +3130,7 @@ function openTextEditor(){
     document.body.append(io);
     io.querySelector('#ioClose').onclick=()=>io.remove();
     io.querySelector('#ioCopy').onclick=()=>{const ta=io.querySelector('#ioOut');const done=()=>toast('JSON copiato.','good');try{navigator.clipboard.writeText(ta.value).then(done,()=>{ta.select();toast('Seleziona e copia il testo a mano.')})}catch(e){ta.select();toast('Seleziona e copia il testo a mano.')}};
-    io.querySelector('#ioLoad').onclick=()=>{const msg=io.querySelector('#ioMsg');try{const obj=JSON.parse(io.querySelector('#ioIn').value);TEXT=mergeText(deepClone(TEXT_DEFAULT),obj);store.set('psyop.text.v2',TEXT);edRender(pg);msg.textContent='Importato. Le modifiche sono attive.';msg.style.color='var(--good)'}catch(e){msg.textContent='Il testo incollato non è un JSON valido: '+e.message;msg.style.color='var(--bad)'}};
+    io.querySelector('#ioLoad').onclick=()=>{const msg=io.querySelector('#ioMsg');try{const obj=JSON.parse(io.querySelector('#ioIn').value);TEXT=mergeText(deepClone(TEXT_DEFAULT),obj);store.set('psyop.text.v3',TEXT);edRender(pg);msg.textContent='Importato. Le modifiche sono attive.';msg.style.color='var(--good)'}catch(e){msg.textContent='Il testo incollato non è un JSON valido: '+e.message;msg.style.color='var(--bad)'}};
   };
 }
 
