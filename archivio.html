@@ -785,10 +785,13 @@ $('#load').onclick=async()=>{
   if(!A.url||!A.key){msg('Servono indirizzo del Worker e chiave.','err');return}
   try{sessionStorage.setItem('psyop.arch',JSON.stringify({url:A.url,key:A.key}))}catch(e){}
   msg('Carico…');
-  try{const r=await fetch(`${A.url}/logs`,{headers:{Authorization:'Bearer '+A.key}});
-    if(r.status===401){msg('Chiave non valida.','err');return}if(!r.ok)throw new Error(r.status);
-    A.list=await r.json();$('#list').hidden=false;renderList();msg(`${A.list.length} sessioni nell'archivio.`,'ok')}
-  catch(e){msg('Non riesco a raggiungere il Worker. Controlla l\'indirizzo ('+e.message+').','err')}
+  let r;
+  try{r=await fetch(`${A.url}/logs`,{headers:{Authorization:'Bearer '+A.key}})}
+  catch(e){msg('Il browser non riesce a contattare il Worker. Controlla che l\'indirizzo sia giusto (senza /logs in fondo) e, se nel Worker hai impostato ALLOWED_ORIGIN, che sia https://gorgus22.github.io oppure toglilo.','err');return}
+  let j=null;try{j=await r.json()}catch(e){}
+  if(!r.ok){msg((j&&j.error)||('Il Worker ha risposto con un errore '+r.status+'.'),'err');return}
+  A.list=Array.isArray(j)?j:[];$('#list').hidden=false;renderList();
+  msg(A.list.length?`${A.list.length} sessioni nell'archivio.`:'Collegato, ma l\'archivio è vuoto. Una sessione arriva solo se il giocatore accetta il consenso e la partita raggiunge un finale (o la pagina viene chiusa).',A.list.length?'ok':'');
 };
 $('#find').oninput=renderList;
 $('#fileIn').onchange=e=>{const f=e.target.files[0];e.target.value='';if(!f)return;const rd=new FileReader();rd.onload=()=>{try{const j=JSON.parse(rd.result);if(!Array.isArray(j.events))throw 0;renderReport(j);msg('File aperto: '+f.name,'ok')}catch(err){msg('Il file non è un log di Psyop valido.','err')}};rd.readAsText(f)};
